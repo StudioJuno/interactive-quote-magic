@@ -9,22 +9,6 @@ interface Props {
   data: QuoteData;
 }
 
-function buildQuoteLines(data: QuoteData) {
-  const lines: { label: string; quantity: number; unit_price: number }[] = [];
-  if (data.nbPhotographes > 0) lines.push({ label: "Photographe", quantity: data.nbPhotographes, unit_price: PRICES.photographe });
-  if (data.nbVideastes > 0) lines.push({ label: "Vidéaste", quantity: data.nbVideastes, unit_price: PRICES.vidéaste });
-  if (data.optionDrone) lines.push({ label: "Prises de vues aériennes (drone)", quantity: 1, unit_price: PRICES.drone });
-  if (data.optionInterviews) lines.push({ label: "Interviews / témoignages invités", quantity: 1, unit_price: PRICES.interviews });
-  if (data.filmTeaser) lines.push({ label: 'Film "teaser"', quantity: 1, unit_price: PRICES.teaser });
-  if (data.filmSignature) lines.push({ label: 'Film "signature"', quantity: 1, unit_price: PRICES.signature });
-  if (data.filmReseaux) lines.push({ label: "Contenu réseaux sociaux express", quantity: 1, unit_price: PRICES.reseaux });
-  if (data.filmBetisier) lines.push({ label: "Bêtisier", quantity: 1, unit_price: PRICES.betisier });
-  if (data.albumPhoto) lines.push({ label: "Album Photo 50 pages Premium", quantity: 1, unit_price: PRICES.album });
-  if (data.coffretUSB) lines.push({ label: "Coffret USB", quantity: 1, unit_price: PRICES.coffret });
-  if (data.delai === "express") lines.push({ label: "Livraison express (< 10 jours)", quantity: 1, unit_price: PRICES.express });
-  return lines;
-}
-
 type Status = "loading" | "success" | "error";
 
 const StepGenerating = ({ data }: Props) => {
@@ -35,22 +19,50 @@ const StepGenerating = ({ data }: Props) => {
   useEffect(() => {
     const submit = async () => {
       try {
-        const lines = buildQuoteLines(data);
         const { data: result, error } = await supabase.functions.invoke("create-pennylane-quote", {
           body: {
+            // Contact
             nom: data.nom,
             prenom: data.prenom,
             email: data.email,
             telephone: data.telephone,
-            adresse: data.lieu || "",
-            dateMariage: data.dateHeure ? data.dateHeure.split("T")[0] : "",
-            lines,
+            adresse: data.adresse || "",
+            // Event details
+            offerType: data.offerType,
+            dateHeure: data.dateHeure,
+            nbHeuresCouverture: data.nbHeuresCouverture,
+            moments: data.moments,
+            lieu: data.lieu,
+            departement: data.departement,
+            nbInvites: data.nbInvites,
+            // Providers
+            nbPhotographes: data.nbPhotographes,
+            nbVideastes: data.nbVideastes,
+            // Options
+            optionDrone: data.optionDrone,
+            optionInterviews: data.optionInterviews,
+            // Films
+            filmTeaser: data.filmTeaser,
+            filmSignature: data.filmSignature,
+            filmReseaux: data.filmReseaux,
+            filmBetisier: data.filmBetisier,
+            // Supports
+            albumPhoto: data.albumPhoto,
+            coffretUSB: data.coffretUSB,
+            // Delivery
+            delai: data.delai,
+            // Other
+            remarques: data.remarques,
+            source: data.source,
+            sourceAutre: data.sourceAutre,
+            // Prices
+            prices: PRICES,
           },
         });
         if (error) { console.error("Edge function error:", error); toast.error("Erreur lors de la création du devis."); setStatus("error"); return; }
         if (result?.error) { console.error("Pennylane error:", result); toast.error(`Erreur : ${result.error}`); setStatus("error"); return; }
-        setQuoteNumber(result?.quote?.quote_number || "");
-        setPdfUrl(result?.quote?.public_file_url || "");
+        setQuoteNumber(result?.quote?.quote_number || result?.estimate?.quote_number || "");
+        setPdfUrl(result?.quote?.public_file_url || result?.estimate?.public_file_url || "");
         setStatus("success");
         toast.success("Votre devis a été créé avec succès !");
       } catch (err) {
