@@ -4,6 +4,7 @@ import NavigationButtons from "../NavigationButtons";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Clock, Calendar } from "lucide-react";
+import { useWizardKeyboard } from "@/hooks/useWizardKeyboard";
 
 interface Props {
   data: QuoteData;
@@ -40,7 +41,6 @@ const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
     onChange({ moments: updated });
   };
 
-  // Split dateHeure into date and time parts
   const datePart = data.dateHeure ? data.dateHeure.split("T")[0] : "";
   const timePart = data.dateHeure ? data.dateHeure.split("T")[1]?.substring(0, 5) || "" : "";
 
@@ -53,6 +53,16 @@ const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
     const date = datePart || new Date().toISOString().split("T")[0];
     onChange({ dateHeure: `${date}T${time}` });
   };
+
+  const handleNext = () => {
+    if (!datePart) {
+      toast.error("Veuillez renseigner la date.");
+      return;
+    }
+    onNext();
+  };
+
+  useWizardKeyboard({ onNext: handleNext, onPrev });
 
   const plageText = useMemo(() => {
     if (!data.dateHeure || !data.nbHeuresCouverture) return null;
@@ -69,19 +79,17 @@ const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
 
   return (
     <div>
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
+      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-2">
         Votre plage horaire
       </h1>
       <p className="text-center text-muted-foreground text-sm mb-8">
         Quand souhaitez-vous couvrir votre mariage ?
       </p>
 
-      <div className="max-w-lg mx-auto space-y-6">
+      <div className="max-w-lg mx-auto space-y-7">
         {/* Date */}
         <div>
-          <label className="font-body text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
-            Date du mariage
-          </label>
+          <label className="step-label">Date du mariage</label>
           <div className="relative">
             <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
@@ -93,11 +101,9 @@ const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
           </div>
         </div>
 
-        {/* Heure de début */}
+        {/* Heure */}
         <div>
-          <label className="font-body text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
-            Heure de début
-          </label>
+          <label className="step-label">Heure de début</label>
           <div className="relative">
             <Clock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <select
@@ -115,9 +121,7 @@ const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
 
         {/* Nombre d'heures */}
         <div>
-          <label className="font-body text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
-            Nombre d'heures de couverture
-          </label>
+          <label className="step-label">Nombre d'heures de couverture</label>
           <div className="flex flex-wrap gap-2">
             {[4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16].map((n) => (
               <button
@@ -130,14 +134,14 @@ const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
               </button>
             ))}
           </div>
-          <p className="text-xs text-foreground/60 italic mt-2">
+          <p className="text-xs text-muted-foreground italic mt-2.5">
             Chaque heure couverte par un photographe inclut 50 photos retouchées HD
           </p>
           {plageText && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex items-center gap-2 text-sm text-muted-foreground mt-2 bg-muted/50 px-3 py-2 rounded-lg"
+              className="flex items-center gap-2 text-sm text-accent font-medium mt-2.5 bg-accent/5 border border-accent/15 px-3 py-2.5 rounded-xl"
             >
               <Clock className="w-4 h-4" />
               {plageText}
@@ -147,9 +151,7 @@ const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
 
         {/* Moments */}
         <div>
-          <label className="font-body text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3 block">
-            Moments à capturer
-          </label>
+          <label className="step-label">Moments à capturer</label>
           <div className="flex flex-wrap gap-2">
             {MOMENTS.map((m) => (
               <button
@@ -165,16 +167,7 @@ const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
         </div>
       </div>
 
-      <NavigationButtons
-        onPrev={onPrev}
-        onNext={() => {
-          if (!datePart) {
-            toast.error("Veuillez renseigner la date.");
-            return;
-          }
-          onNext();
-        }}
-      />
+      <NavigationButtons onPrev={onPrev} onNext={handleNext} />
     </div>
   );
 };

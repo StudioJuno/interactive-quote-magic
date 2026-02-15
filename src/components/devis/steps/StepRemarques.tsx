@@ -1,6 +1,7 @@
 import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
 import { MessageSquare } from "lucide-react";
+import { useWizardKeyboard } from "@/hooks/useWizardKeyboard";
 
 interface Props {
   data: QuoteData;
@@ -10,9 +11,11 @@ interface Props {
 }
 
 const StepRemarques = ({ data, onChange, onNext, onPrev }: Props) => {
+  useWizardKeyboard({ onNext, onPrev });
+
   return (
     <div>
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
+      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-2">
         Remarques
       </h1>
       <p className="text-center text-muted-foreground text-sm mb-10">

@@ -2,6 +2,7 @@ import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
 import { motion } from "framer-motion";
 import { Plane, Mic } from "lucide-react";
+import { useWizardKeyboard } from "@/hooks/useWizardKeyboard";
 
 interface Props {
   data: QuoteData;
@@ -11,6 +12,8 @@ interface Props {
 }
 
 const StepOptionsSupp = ({ data, onChange, onNext, onPrev }: Props) => {
+  useWizardKeyboard({ onNext, onPrev });
+
   const options = [
     {
       key: "optionDrone" as const,
@@ -30,7 +33,7 @@ const StepOptionsSupp = ({ data, onChange, onNext, onPrev }: Props) => {
 
   return (
     <div>
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
+      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-2">
         Options supplémentaires
       </h1>
       <p className="text-center text-muted-foreground text-sm mb-10">
@@ -50,8 +53,8 @@ const StepOptionsSupp = ({ data, onChange, onNext, onPrev }: Props) => {
               className={`option-card flex items-center gap-4 ${checked ? 'selected' : ''}`}
               onClick={() => onChange({ [opt.key]: !data[opt.key] })}
             >
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 ${
-                checked ? 'bg-accent text-accent-foreground' : 'bg-muted text-muted-foreground'
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                checked ? 'bg-accent text-accent-foreground scale-110' : 'bg-muted text-muted-foreground'
               }`}>
                 <Icon className="w-5 h-5" />
               </div>
@@ -60,14 +63,14 @@ const StepOptionsSupp = ({ data, onChange, onNext, onPrev }: Props) => {
                   <span className="font-body font-medium text-sm">{opt.label}</span>
                   <span className="text-xs font-semibold text-accent">{opt.price}</span>
                 </div>
-                <p className="text-xs text-muted-foreground">{opt.desc}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
               </div>
               <div className="option-checkbox">
                 {checked && (
                   <motion.svg
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="w-3 h-3 text-accent"
+                    className="w-3 h-3"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

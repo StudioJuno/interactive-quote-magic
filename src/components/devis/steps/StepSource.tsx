@@ -2,6 +2,8 @@ import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { useAutoAdvance } from "@/hooks/useAutoAdvance";
+import { useWizardKeyboard } from "@/hooks/useWizardKeyboard";
 
 interface Props {
   data: QuoteData;
@@ -20,9 +22,19 @@ const SOURCES = [
 ];
 
 const StepSource = ({ data, onChange, onNext, onPrev }: Props) => {
+  const handleNext = () => {
+    if (!data.source) { toast.error("Veuillez sélectionner une option."); return; }
+    onNext();
+  };
+
+  // Auto-advance only for simple sources (not those that need follow-up input)
+  const needsInput = data.source === "Recommandation - Qui ?" || data.source === "Autre - Champs libre";
+  useAutoAdvance(data.source, handleNext, { enabled: !needsInput });
+  useWizardKeyboard({ onNext: handleNext, onPrev });
+
   return (
     <div>
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
+      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-2">
         Comment avez-vous connu Juno ?
       </h1>
       <p className="text-center text-muted-foreground text-sm mb-10">
@@ -57,7 +69,7 @@ const StepSource = ({ data, onChange, onNext, onPrev }: Props) => {
         })}
       </div>
 
-      {(data.source === "Recommandation - Qui ?" || data.source === "Autre - Champs libre") && (
+      {needsInput && (
         <motion.div
           className="mt-6 max-w-md mx-auto"
           initial={{ opacity: 0, height: 0 }}
@@ -69,14 +81,12 @@ const StepSource = ({ data, onChange, onNext, onPrev }: Props) => {
             onChange={(e) => onChange({ sourceAutre: e.target.value })}
             placeholder={data.source === "Recommandation - Qui ?" ? "Qui vous a recommandé ?" : "Précisez..."}
             className="wizard-input"
+            autoFocus
           />
         </motion.div>
       )}
 
-      <NavigationButtons onPrev={onPrev} onNext={() => {
-        if (!data.source) { toast.error("Veuillez sélectionner une option."); return; }
-        onNext();
-      }} />
+      <NavigationButtons onPrev={onPrev} onNext={handleNext} />
     </div>
   );
 };

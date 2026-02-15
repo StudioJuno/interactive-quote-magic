@@ -2,6 +2,7 @@ import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
 import { toast } from "sonner";
 import { MapPin } from "lucide-react";
+import { useWizardKeyboard } from "@/hooks/useWizardKeyboard";
 
 interface Props {
   data: QuoteData;
@@ -11,20 +12,25 @@ interface Props {
 }
 
 const StepLieu = ({ data, onChange, onNext, onPrev }: Props) => {
+  const handleNext = () => {
+    if (!data.departement.trim()) { toast.error("Veuillez renseigner au moins le département."); return; }
+    onNext();
+  };
+
+  useWizardKeyboard({ onNext: handleNext, onPrev });
+
   return (
     <div>
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
+      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-2">
         Lieu du mariage
       </h1>
       <p className="text-center text-muted-foreground text-sm mb-10">
         Indiquez le lieu ou au minimum le département
       </p>
 
-      <div className="max-w-md mx-auto space-y-4">
+      <div className="max-w-md mx-auto space-y-5">
         <div>
-          <label className="font-body text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
-            Nom du lieu (optionnel)
-          </label>
+          <label className="step-label">Nom du lieu (optionnel)</label>
           <div className="relative">
             <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
@@ -36,13 +42,11 @@ const StepLieu = ({ data, onChange, onNext, onPrev }: Props) => {
             />
           </div>
         </div>
-        <p className="text-xs text-accent italic">
-          Les frais de déplacement sont toujours offerts
+        <p className="text-xs text-accent italic font-medium">
+          Les frais de déplacement sont toujours offerts ✨
         </p>
         <div>
-          <label className="font-body text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
-            Département *
-          </label>
+          <label className="step-label">Département *</label>
           <input
             type="text"
             value={data.departement}
@@ -53,10 +57,7 @@ const StepLieu = ({ data, onChange, onNext, onPrev }: Props) => {
         </div>
       </div>
 
-      <NavigationButtons onPrev={onPrev} onNext={() => {
-        if (!data.departement.trim()) { toast.error("Veuillez renseigner au moins le département."); return; }
-        onNext();
-      }} />
+      <NavigationButtons onPrev={onPrev} onNext={handleNext} />
     </div>
   );
 };

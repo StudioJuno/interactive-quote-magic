@@ -1,6 +1,7 @@
 import { QuoteData, PRICES } from "../types";
 import NavigationButtons from "../NavigationButtons";
 import { motion } from "framer-motion";
+import { useWizardKeyboard } from "@/hooks/useWizardKeyboard";
 
 interface Props {
   data: QuoteData;
@@ -10,6 +11,8 @@ interface Props {
 }
 
 const StepRecap = ({ data, onChange, onNext, onPrev }: Props) => {
+  useWizardKeyboard({ onNext, onPrev });
+
   const label =
     data.offerType === "photos-film"
       ? "Photos & Vidéo"
@@ -33,9 +36,9 @@ const StepRecap = ({ data, onChange, onNext, onPrev }: Props) => {
   const subtotal = lines.reduce((sum, l) => sum + l.price, 0);
 
   const dateDisplay = data.dateHeure
-    ? new Date(data.dateHeure).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })
+    ? new Date(data.dateHeure).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })
     : "";
-  const heuresDisplay = data.nbHeuresCouverture ? `(${data.nbHeuresCouverture}h)` : "";
+  const heuresDisplay = data.nbHeuresCouverture ? `${data.nbHeuresCouverture}h de couverture` : "";
 
   return (
     <div>
@@ -45,42 +48,56 @@ const StepRecap = ({ data, onChange, onNext, onPrev }: Props) => {
       <p className="text-center text-muted-foreground text-sm mb-8">{label}</p>
 
       <div className="max-w-lg mx-auto">
-        {dateDisplay && (
-          <p className="font-body font-semibold text-sm mb-1">
-            {dateDisplay}, {heuresDisplay}
-          </p>
-        )}
-        {data.moments.length > 0 && (
-          <p className="text-accent text-xs mb-4">{data.moments.join(", ")}</p>
-        )}
+        {/* Event details */}
+        <div className="bg-accent/5 border border-accent/15 rounded-xl p-4 mb-6">
+          {dateDisplay && (
+            <p className="font-body font-semibold text-sm mb-1">
+              📅 {dateDisplay}
+            </p>
+          )}
+          {heuresDisplay && (
+            <p className="text-xs text-muted-foreground mb-1">⏱ {heuresDisplay}</p>
+          )}
+          {data.moments.length > 0 && (
+            <p className="text-accent text-xs">{data.moments.join(", ")}</p>
+          )}
+          {data.lieu && (
+            <p className="text-xs text-muted-foreground mt-1">📍 {data.lieu}</p>
+          )}
+        </div>
 
-        <div className="space-y-2 mb-4">
-          {lines.map((line) => (
+        {/* Line items */}
+        <div className="space-y-2.5 mb-4">
+          {lines.map((line, i) => (
             <motion.div
               key={line.label}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.04 }}
               className="flex justify-between text-sm font-body"
             >
               <span className="text-muted-foreground">{line.label}</span>
-              <span className="font-medium">{line.price} €</span>
+              <span className="font-medium tabular-nums">{line.price} €</span>
             </motion.div>
           ))}
         </div>
 
-        <div className="border-t border-border pt-3 mb-2">
-          <div className="flex justify-between text-sm">
-            <span />
-            <span className="font-semibold">{subtotal} €</span>
+        <div className="border-t border-border pt-4 mb-2">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium">Livraison {data.delai === "express" ? "Express" : "Standard"}</span>
           </div>
         </div>
 
-        <p className="font-body font-semibold text-sm mb-1">
-          Livraison {data.delai === "express" ? "Express" : "Standard"}
-        </p>
-
-        <div className="flex justify-end mt-2 mb-6">
-          <span className="text-lg font-heading font-bold">Total: {subtotal} €</span>
+        <div className="flex justify-between items-center mt-3 mb-6 bg-accent/5 border border-accent/15 rounded-xl px-4 py-3">
+          <span className="text-sm font-medium">Total HT</span>
+          <motion.span
+            key={subtotal}
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            className="text-2xl font-heading font-bold text-accent"
+          >
+            {subtotal.toLocaleString("fr-FR")} €
+          </motion.span>
         </div>
 
         {/* Code promo */}
@@ -89,12 +106,12 @@ const StepRecap = ({ data, onChange, onNext, onPrev }: Props) => {
             type="text"
             value={data.codePromo}
             onChange={(e) => onChange({ codePromo: e.target.value })}
-            placeholder="Saisissez votre code promo"
+            placeholder="Code promo"
             className="wizard-input flex-1"
           />
           <button
             type="button"
-            className="px-5 py-3 border border-border rounded-lg font-body text-sm font-medium hover:bg-muted transition-colors"
+            className="px-5 py-3 border border-accent/30 text-accent rounded-xl font-body text-sm font-medium hover:bg-accent/5 transition-colors"
           >
             Valider
           </button>

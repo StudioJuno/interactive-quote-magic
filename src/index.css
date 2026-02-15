@@ -6,78 +6,78 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 0 0% 8%;
+    --background: 30 20% 97%;
+    --foreground: 20 10% 12%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 8%;
+    --card: 30 20% 100%;
+    --card-foreground: 20 10% 12%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 8%;
+    --popover: 30 20% 100%;
+    --popover-foreground: 20 10% 12%;
 
-    --primary: 0 0% 8%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 20 10% 12%;
+    --primary-foreground: 30 20% 97%;
 
-    --secondary: 0 0% 94%;
-    --secondary-foreground: 0 0% 8%;
+    --secondary: 30 15% 93%;
+    --secondary-foreground: 20 10% 12%;
 
-    --muted: 0 0% 92%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 30 12% 91%;
+    --muted-foreground: 20 8% 40%;
 
-    --accent: 0 0% 8%;
+    --accent: 32 45% 46%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 85%;
-    --input: 0 0% 85%;
-    --ring: 0 0% 8%;
+    --border: 30 15% 86%;
+    --input: 30 15% 86%;
+    --ring: 32 45% 46%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 8%;
-    --sidebar-primary: 0 0% 8%;
+    --sidebar-background: 30 20% 97%;
+    --sidebar-foreground: 20 10% 12%;
+    --sidebar-primary: 20 10% 12%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 94%;
-    --sidebar-accent-foreground: 0 0% 8%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 0 0% 8%;
+    --sidebar-accent: 30 15% 93%;
+    --sidebar-accent-foreground: 20 10% 12%;
+    --sidebar-border: 30 10% 90%;
+    --sidebar-ring: 32 45% 46%;
 
-    --step-active: 0 0% 8%;
+    --step-active: 32 45% 46%;
     --step-active-foreground: 0 0% 100%;
-    --step-inactive: 0 0% 78%;
-    --step-line: 0 0% 8%;
-    --step-line-inactive: 0 0% 88%;
+    --step-inactive: 30 10% 78%;
+    --step-line: 32 45% 46%;
+    --step-line-inactive: 30 10% 88%;
 
-    --summary-bg: 0 0% 98%;
-    --summary-accent: 0 0% 8%;
+    --summary-bg: 30 20% 97%;
+    --summary-accent: 32 45% 46%;
 
-    --gold: 0 0% 8%;
-    --gold-light: 0 0% 92%;
+    --gold: 32 45% 46%;
+    --gold-light: 32 30% 92%;
   }
 
   .dark {
-    --background: 0 0% 6%;
-    --foreground: 0 0% 92%;
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 92%;
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 92%;
-    --primary: 0 0% 92%;
-    --primary-foreground: 0 0% 6%;
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 92%;
-    --muted: 0 0% 18%;
-    --muted-foreground: 0 0% 55%;
-    --accent: 0 0% 92%;
-    --accent-foreground: 0 0% 6%;
+    --background: 20 15% 6%;
+    --foreground: 30 10% 92%;
+    --card: 20 12% 10%;
+    --card-foreground: 30 10% 92%;
+    --popover: 20 12% 10%;
+    --popover-foreground: 30 10% 92%;
+    --primary: 30 10% 92%;
+    --primary-foreground: 20 15% 6%;
+    --secondary: 20 10% 15%;
+    --secondary-foreground: 30 10% 92%;
+    --muted: 20 10% 18%;
+    --muted-foreground: 30 8% 55%;
+    --accent: 32 40% 50%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 92%;
-    --border: 0 0% 22%;
-    --input: 0 0% 22%;
-    --ring: 0 0% 92%;
+    --destructive-foreground: 30 10% 92%;
+    --border: 20 10% 22%;
+    --input: 20 10% 22%;
+    --ring: 32 40% 50%;
   }
 }
 
@@ -97,36 +97,53 @@
 
 @layer components {
   .option-card {
-    @apply relative border border-border bg-card p-5 cursor-pointer transition-all duration-300 rounded-lg;
-    @apply hover:border-accent hover:shadow-md;
+    @apply relative border border-border bg-card p-5 cursor-pointer transition-all duration-300 rounded-xl;
+    @apply hover:border-accent/50 hover:shadow-md hover:shadow-accent/5;
   }
   
   .option-card.selected {
-    @apply border-accent bg-accent/5 shadow-md;
+    @apply border-accent bg-accent/5 shadow-md shadow-accent/10 ring-1 ring-accent/20;
   }
 
   .option-radio {
-    @apply w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 flex-shrink-0;
+    @apply w-5 h-5 rounded-full border-2 border-border flex items-center justify-center transition-all duration-200 flex-shrink-0;
+  }
+
+  .option-card.selected .option-radio {
+    @apply border-accent;
   }
 
   .option-checkbox {
-    @apply w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 flex-shrink-0;
+    @apply w-5 h-5 rounded-md border-2 border-border flex items-center justify-center transition-all duration-200 flex-shrink-0;
+  }
+
+  .option-card.selected .option-checkbox {
+    @apply border-accent bg-accent;
+  }
+
+  .option-card.selected .option-checkbox svg {
+    @apply text-accent-foreground;
   }
 
   .wizard-input {
-    @apply w-full px-4 py-3.5 border border-border bg-card font-body text-sm rounded-lg transition-all duration-200;
+    @apply w-full px-4 py-3.5 border border-border bg-card font-body text-sm rounded-xl transition-all duration-200;
     @apply focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent;
+    @apply placeholder:text-muted-foreground/60;
   }
 
   .tag-button {
-    @apply px-4 py-2.5 border rounded-full text-sm font-body transition-all duration-200;
+    @apply px-4 py-2.5 border rounded-full text-sm font-body font-medium transition-all duration-200;
   }
   
   .tag-button.selected {
-    @apply border-accent bg-accent text-accent-foreground shadow-sm;
+    @apply border-accent bg-accent text-accent-foreground shadow-sm shadow-accent/20;
   }
   
   .tag-button:not(.selected) {
-    @apply border-border hover:border-accent/50 hover:bg-accent/5;
+    @apply border-border hover:border-accent/40 hover:bg-accent/5;
+  }
+
+  .step-label {
+    @apply text-xs font-body font-medium text-muted-foreground uppercase tracking-wider mb-2.5 block;
   }
 }

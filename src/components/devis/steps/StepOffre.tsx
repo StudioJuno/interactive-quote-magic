@@ -3,6 +3,8 @@ import NavigationButtons from "../NavigationButtons";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Film, Camera, Clapperboard } from "lucide-react";
+import { useAutoAdvance } from "@/hooks/useAutoAdvance";
+import { useWizardKeyboard } from "@/hooks/useWizardKeyboard";
 
 interface Props {
   data: QuoteData;
@@ -17,9 +19,17 @@ const StepOffre = ({ data, onChange, onNext }: Props) => {
     { value: "photos-film" as const, label: "Photos et Film", icon: Clapperboard, desc: "La formule complète" },
   ];
 
+  const handleNext = () => {
+    if (!data.offerType) { toast.error("Veuillez sélectionner une option."); return; }
+    onNext();
+  };
+
+  useAutoAdvance(data.offerType, handleNext);
+  useWizardKeyboard({ onNext: handleNext });
+
   return (
     <div>
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
+      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-2">
         Que souhaitez-vous ?
       </h1>
       <p className="text-center text-muted-foreground text-sm mb-10">
@@ -39,14 +49,14 @@ const StepOffre = ({ data, onChange, onNext }: Props) => {
               onClick={() => onChange({ offerType: opt.value })}
               className={`option-card flex items-center gap-4 ${selected ? 'selected' : ''}`}
             >
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 ${
-                selected ? 'bg-accent text-accent-foreground' : 'bg-muted text-muted-foreground'
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                selected ? 'bg-accent text-accent-foreground scale-110' : 'bg-muted text-muted-foreground'
               }`}>
                 <Icon className="w-5 h-5" />
               </div>
               <div className="flex-1">
                 <span className="font-body font-medium text-base">{opt.label}</span>
-                <p className="text-xs text-muted-foreground">{opt.desc}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
               </div>
               <div className="option-radio">
                 {selected && (
@@ -63,10 +73,7 @@ const StepOffre = ({ data, onChange, onNext }: Props) => {
         })}
       </div>
 
-      <NavigationButtons showPrev={false} onNext={() => {
-        if (!data.offerType) { toast.error("Veuillez sélectionner une option."); return; }
-        onNext();
-      }} />
+      <NavigationButtons showPrev={false} onNext={handleNext} />
     </div>
   );
 };
