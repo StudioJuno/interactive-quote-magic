@@ -1,7 +1,7 @@
 import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
 import { motion } from "framer-motion";
-import { Plane, Mic } from "lucide-react";
+import { Plane, Mic, Speech } from "lucide-react";
 import { useWizardKeyboard } from "@/hooks/useWizardKeyboard";
 
 interface Props {
@@ -23,10 +23,17 @@ const StepOptionsSupp = ({ data, onChange, onNext, onPrev }: Props) => {
       icon: Plane,
     },
     {
+      key: "optionDiscours" as const,
+      label: "Discours",
+      price: "100 €",
+      desc: "Captation complète des échanges de vœux et discours. Remise d'un film + d'un fichier sonore",
+      icon: Speech,
+    },
+    {
       key: "optionInterviews" as const,
       label: "Interviews / témoignages",
       price: "100 €",
-      desc: "Captation du son avec micros cravates",
+      desc: "Interview des mariés et des invités. Remise d'un film + d'un fichier sonore",
       icon: Mic,
     },
   ];

@@ -135,6 +135,7 @@ const DevisWizard = () => {
     t += data.nbPhotographes * PRICES.photographe;
     if (data.optionDrone) t += PRICES.drone;
     if (data.optionInterviews) t += PRICES.interviews;
+    if (data.optionDiscours) t += PRICES.discours;
     if (data.filmTeaser) t += PRICES.teaser;
     if (data.filmSignature) t += PRICES.signature;
     if (data.filmReseaux) t += PRICES.reseaux;
