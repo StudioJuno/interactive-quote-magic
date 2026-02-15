@@ -78,8 +78,8 @@ const StepContact = ({ data, onChange, onPrev, onNext }: Props) => {
           <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             type="text"
-            value={data.dateMariage}
-            onChange={(e) => onChange({ dateMariage: e.target.value })}
+            value={data.adresse}
+            onChange={(e) => onChange({ adresse: e.target.value })}
             placeholder="Adresse"
             className="wizard-input pl-10"
           />
