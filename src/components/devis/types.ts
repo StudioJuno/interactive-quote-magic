@@ -29,6 +29,7 @@ export interface QuoteData {
   // Options supplémentaires
   optionDrone: boolean;
   optionInterviews: boolean;
+  optionDiscours: boolean;
 
   // Films
   filmTeaser: boolean;
@@ -77,6 +78,7 @@ export const initialQuoteData: QuoteData = {
   nbVideastes: 0,
   optionDrone: false,
   optionInterviews: false,
+  optionDiscours: false,
   filmTeaser: false,
   filmSignature: false,
   filmReseaux: false,
@@ -101,6 +103,7 @@ export const PRICES = {
   vidéaste: 1700,
   drone: 150,
   interviews: 100,
+  discours: 100,
   teaser: 200,
   signature: 250,
   reseaux: 200,
