@@ -1,5 +1,6 @@
 import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
+import { toast } from "sonner";
 
 interface Props {
   data: QuoteData;
@@ -74,7 +75,13 @@ const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
           ))}
       </div>
 
-      <NavigationButtons onPrev={onPrev} onNext={onNext} />
+      <NavigationButtons onPrev={onPrev} onNext={() => {
+        if (showPhotographes && data.nbPhotographes === 0 && showVideastes && data.nbVideastes === 0) {
+          toast.error("Veuillez sélectionner au moins un prestataire.");
+          return;
+        }
+        onNext();
+      }} />
     </div>
   );
 };

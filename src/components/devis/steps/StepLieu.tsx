@@ -1,5 +1,6 @@
 import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
+import { toast } from "sonner";
 
 interface Props {
   data: QuoteData;
@@ -35,7 +36,10 @@ const StepLieu = ({ data, onChange, onNext, onPrev }: Props) => {
         />
       </div>
 
-      <NavigationButtons onPrev={onPrev} onNext={onNext} />
+      <NavigationButtons onPrev={onPrev} onNext={() => {
+        if (!data.departement.trim()) { toast.error("Veuillez renseigner au moins le département."); return; }
+        onNext();
+      }} />
     </div>
   );
 };

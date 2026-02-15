@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
+import { toast } from "sonner";
 
 interface Props {
   data: QuoteData;
@@ -109,7 +110,10 @@ const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
         </div>
       </div>
 
-      <NavigationButtons onPrev={onPrev} onNext={onNext} />
+      <NavigationButtons onPrev={onPrev} onNext={() => {
+        if (!data.dateHeure) { toast.error("Veuillez renseigner la date et l'heure."); return; }
+        onNext();
+      }} />
     </div>
   );
 };
