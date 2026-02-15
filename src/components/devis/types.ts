@@ -58,7 +58,9 @@ export interface QuoteData {
   nom: string;
   prenom: string;
   email: string;
+  email2: string;
   telephone: string;
+  telephone2: string;
   adresse: string;
   dateMariage: string;
 }
@@ -93,7 +95,9 @@ export const initialQuoteData: QuoteData = {
   nom: "",
   prenom: "",
   email: "",
+  email2: "",
   telephone: "",
+  telephone2: "",
   adresse: "",
   dateMariage: "",
 };
