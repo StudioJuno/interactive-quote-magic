@@ -110,5 +110,5 @@ export const PRICES = {
   betisier: 80,
   album: 200,
   coffret: 80,
-  express: 200,
+  express: 150,
 };
