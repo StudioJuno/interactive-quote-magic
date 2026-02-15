@@ -1,7 +1,9 @@
-import { QuoteData } from "../types";
+import { useState } from "react";
+import { QuoteData, PRICES } from "../types";
 import NavigationButtons from "../NavigationButtons";
 import { toast } from "sonner";
-import { MapPin } from "lucide-react";
+import { MapPin, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
   data: QuoteData;
@@ -9,13 +11,72 @@ interface Props {
   onPrev: () => void;
 }
 
+function buildQuoteLines(data: QuoteData) {
+  const lines: { label: string; quantity: number; unit_price: number }[] = [];
+
+  if (data.nbPhotographes > 0) {
+    lines.push({ label: "Photographe", quantity: data.nbPhotographes, unit_price: PRICES.photographe });
+  }
+  if (data.nbVideastes > 0) {
+    lines.push({ label: "Vidéaste", quantity: data.nbVideastes, unit_price: PRICES.vidéaste });
+  }
+  if (data.optionDrone) lines.push({ label: "Prises de vues aériennes (drone)", quantity: 1, unit_price: PRICES.drone });
+  if (data.optionInterviews) lines.push({ label: "Interviews / témoignages invités", quantity: 1, unit_price: PRICES.interviews });
+  if (data.filmTeaser) lines.push({ label: 'Film "teaser"', quantity: 1, unit_price: PRICES.teaser });
+  if (data.filmSignature) lines.push({ label: 'Film "signature"', quantity: 1, unit_price: PRICES.signature });
+  if (data.filmReseaux) lines.push({ label: "Contenu réseaux sociaux express", quantity: 1, unit_price: PRICES.reseaux });
+  if (data.filmBetisier) lines.push({ label: "Bêtisier", quantity: 1, unit_price: PRICES.betisier });
+  if (data.albumPhoto) lines.push({ label: "Album Photo 50 pages Premium", quantity: 1, unit_price: PRICES.album });
+  if (data.coffretUSB) lines.push({ label: "Coffret USB", quantity: 1, unit_price: PRICES.coffret });
+  if (data.delai === "express") lines.push({ label: "Livraison express (< 10 jours)", quantity: 1, unit_price: PRICES.express });
+
+  return lines;
+}
+
 const StepContact = ({ data, onChange, onPrev }: Props) => {
-  const handleNext = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
     if (!data.nom || !data.email) {
       toast.error("Veuillez remplir au moins le nom et l'email.");
       return;
     }
-    toast.success("Merci ! Votre demande de devis a bien été envoyée.");
+
+    setIsSubmitting(true);
+    try {
+      const lines = buildQuoteLines(data);
+      
+      const { data: result, error } = await supabase.functions.invoke("create-pennylane-quote", {
+        body: {
+          nom: data.nom,
+          prenom: data.prenom,
+          email: data.email,
+          telephone: data.telephone,
+          adresse: data.dateMariage, // dateMariage field is used as address
+          dateMariage: data.dateHeure ? data.dateHeure.split("T")[0] : "",
+          lines,
+        },
+      });
+
+      if (error) {
+        console.error("Edge function error:", error);
+        toast.error("Erreur lors de la création du devis. Veuillez réessayer.");
+        return;
+      }
+
+      if (result?.error) {
+        console.error("Pennylane error:", result);
+        toast.error(`Erreur Pennylane : ${result.error}`);
+        return;
+      }
+
+      toast.success("Votre devis a été créé avec succès dans Pennylane !");
+    } catch (err) {
+      console.error("Submit error:", err);
+      toast.error("Une erreur est survenue. Veuillez réessayer.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -69,7 +130,24 @@ const StepContact = ({ data, onChange, onPrev }: Props) => {
         </div>
       </div>
 
-      <NavigationButtons onPrev={onPrev} onNext={handleNext} />
+      <div className="flex justify-center gap-3 mt-10">
+        <button
+          onClick={onPrev}
+          className="w-12 h-12 border border-border flex items-center justify-center hover:bg-muted transition-colors"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          className="px-8 py-3 bg-foreground text-background font-body font-medium text-sm hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+        >
+          {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+          {isSubmitting ? "Envoi en cours..." : "Envoyer le devis"}
+        </button>
+      </div>
     </div>
   );
 };
