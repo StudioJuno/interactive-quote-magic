@@ -1,5 +1,6 @@
 import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
+import { Users } from "lucide-react";
 
 interface Props {
   data: QuoteData;
@@ -10,19 +11,25 @@ interface Props {
 
 const StepInvites = ({ data, onChange, onNext, onPrev }: Props) => {
   return (
-    <div className="animate-fade-in">
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-12">
-        Combien d'invités prévoyez-vous ?
+    <div>
+      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
+        Vos invités
       </h1>
+      <p className="text-center text-muted-foreground text-sm mb-10">
+        Combien d'invités prévoyez-vous ?
+      </p>
 
       <div className="max-w-md mx-auto">
-        <input
-          type="number"
-          value={data.nbInvites}
-          onChange={(e) => onChange({ nbInvites: e.target.value })}
-          placeholder="Ex: 100"
-          className="w-full px-4 py-3 border border-border bg-card font-body text-sm focus:outline-none focus:ring-1 focus:ring-foreground"
-        />
+        <div className="relative">
+          <Users className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input
+            type="number"
+            value={data.nbInvites}
+            onChange={(e) => onChange({ nbInvites: e.target.value })}
+            placeholder="Ex : 100"
+            className="wizard-input pl-10"
+          />
+        </div>
       </div>
 
       <NavigationButtons onPrev={onPrev} onNext={onNext} />

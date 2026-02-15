@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
+import { Clock } from "lucide-react";
 
 interface Props {
   data: QuoteData;
@@ -19,7 +21,7 @@ const MOMENTS = [
   "Soirée",
   "Mairie",
   "Brunch lendemain",
-  "Autre (champ libre)",
+  "Autre",
 ];
 
 const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
@@ -38,75 +40,77 @@ const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
       const end = new Date(start.getTime() + data.nbHeuresCouverture * 60 * 60 * 1000);
       const fmt = (d: Date) =>
         `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-      return `📅 Prestation de ${fmt(start)} à ${fmt(end)}`;
+      return `Prestation de ${fmt(start)} à ${fmt(end)}`;
     } catch {
       return null;
     }
   }, [data.dateHeure, data.nbHeuresCouverture]);
 
   return (
-    <div className="animate-fade-in">
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-10">
-        Sur quelle plage souhaitez vous couvrir votre mariage ?
+    <div>
+      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
+        Votre plage horaire
       </h1>
+      <p className="text-center text-muted-foreground text-sm mb-8">
+        Quand souhaitez-vous couvrir votre mariage ?
+      </p>
 
       <div className="max-w-lg mx-auto space-y-6">
-        {/* Date & heure */}
-        <input
-          type="datetime-local"
-          value={data.dateHeure}
-          onChange={(e) => onChange({ dateHeure: e.target.value })}
-          className="w-full px-4 py-3 border border-border bg-card font-body text-sm text-center focus:outline-none focus:ring-1 focus:ring-foreground"
-        />
-
-        {/* Nombre d'heures */}
         <div>
-          <label className="font-body text-sm mb-1 block">
-            Nombre d'heure de couvertures
+          <label className="font-body text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
+            Date et heure de début
+          </label>
+          <input
+            type="datetime-local"
+            value={data.dateHeure}
+            onChange={(e) => onChange({ dateHeure: e.target.value })}
+            className="wizard-input"
+          />
+        </div>
+
+        <div>
+          <label className="font-body text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
+            Nombre d'heures de couverture
           </label>
           <input
             type="number"
             min={1}
             max={24}
             value={data.nbHeuresCouverture}
-            onChange={(e) =>
-              onChange({ nbHeuresCouverture: parseInt(e.target.value) || 1 })
-            }
-            className="w-full px-4 py-3 border border-border bg-card font-body text-sm focus:outline-none focus:ring-1 focus:ring-foreground"
+            onChange={(e) => onChange({ nbHeuresCouverture: parseInt(e.target.value) || 1 })}
+            className="wizard-input"
           />
-          <p className="text-sm text-summary-accent italic mt-2">
-            Chaque heure couverte par un photographe inclus 50 photos retouchées
-            en haute définition
+          <p className="text-xs text-accent italic mt-2">
+            Chaque heure couverte par un photographe inclut 50 photos retouchées HD
           </p>
           {plageText && (
-            <p className="text-sm text-muted-foreground mt-1">{plageText}</p>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex items-center gap-2 text-sm text-muted-foreground mt-2 bg-muted/50 px-3 py-2 rounded-lg"
+            >
+              <Clock className="w-4 h-4" />
+              {plageText}
+            </motion.div>
           )}
         </div>
 
-        {/* Moments */}
         <div>
-          <p className="font-body text-sm mb-3">
-            Quels moments souhaitez-vous capturer ?
-          </p>
-          <div className="flex flex-wrap gap-3">
+          <label className="font-body text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3 block">
+            Moments à capturer
+          </label>
+          <div className="flex flex-wrap gap-2">
             {MOMENTS.map((m) => (
               <button
                 key={m}
                 type="button"
                 onClick={() => toggleMoment(m)}
-                className={`px-4 py-2 border text-sm font-body transition-all ${
-                  data.moments.includes(m)
-                    ? "border-foreground bg-foreground text-background"
-                    : "border-border hover:border-foreground"
-                }`}
+                className={`tag-button ${data.moments.includes(m) ? 'selected' : ''}`}
               >
                 {m}
               </button>
             ))}
           </div>
-          <p className="text-sm text-muted-foreground mt-2 italic">
-            Sélectionner une ou plusieurs options
-          </p>
         </div>
       </div>
 

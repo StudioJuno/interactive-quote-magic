@@ -1,5 +1,7 @@
 import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
+import { motion } from "framer-motion";
+import { Clapperboard, Film, Share2, PartyPopper } from "lucide-react";
 
 interface Props {
   data: QuoteData;
@@ -10,60 +12,59 @@ interface Props {
 
 const StepFilms = ({ data, onChange, onNext, onPrev }: Props) => {
   const options = [
-    {
-      key: "filmTeaser" as const,
-      label: 'Film "teaser" - 200 €',
-      desc: "1 min : une minute intense qui concentre vos plus beaux instants. Livré en format horizontal + vertical",
-    },
-    {
-      key: "filmSignature" as const,
-      label: 'Film "signature" - 250 €',
-      desc: "3 à 5min : le format phare, équilibre parfait entre émotion et récit",
-    },
-    {
-      key: "filmReseaux" as const,
-      label: "Contenu réseaux sociaux express – 200 €",
-      desc: "En moins de 7 jours : 3 reels de 15 s (vertical, prêts Insta/TikTok) + 15 photos verticales retouchées. Le concentré de votre mariage, prêt à partager.",
-    },
-    {
-      key: "filmBetisier" as const,
-      label: "Bêtisier – 80 €",
-      desc: 'Un montage bonus qui regroupe tous les moments drôles, décalés ou "off" qu\'on n\'a pas pu mettre dans le film principal. À regarder sans modération !',
-    },
+    { key: "filmTeaser" as const, label: 'Film "teaser"', price: "200 €", desc: "1 min intense — horizontal + vertical", icon: Film },
+    { key: "filmSignature" as const, label: 'Film "signature"', price: "250 €", desc: "3 à 5 min — le format phare", icon: Clapperboard },
+    { key: "filmReseaux" as const, label: "Réseaux sociaux express", price: "200 €", desc: "3 reels + 15 photos en < 7 jours", icon: Share2 },
+    { key: "filmBetisier" as const, label: "Bêtisier", price: "80 €", desc: "Les moments drôles et décalés", icon: PartyPopper },
   ];
 
   return (
-    <div className="animate-fade-in">
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-4">
-        Quel(s) film(s) souhaitez-vous recevoir ?
+    <div>
+      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
+        Vos films
       </h1>
       <p className="text-center text-muted-foreground text-sm mb-2">
-        Le film long (environ 15 minutes) est toujours inclus dans toutes nos prestations vidéo.
+        Le film long (~15 min) est toujours inclus
       </p>
-      <p className="text-center text-muted-foreground text-sm mb-8">
-        Vous pouvez ajouter en option :
+      <p className="text-center text-muted-foreground text-xs mb-8">
+        Ajoutez en option :
       </p>
 
-      <div className="space-y-5 max-w-lg mx-auto">
-        {options.map((opt) => (
-          <div key={opt.key} className="flex items-start gap-3 cursor-pointer" onClick={() => onChange({ [opt.key]: !data[opt.key] })}>
-            <div
-              className={`w-5 h-5 border-2 flex items-center justify-center mt-0.5 transition-all ${
-                data[opt.key] ? "border-foreground bg-foreground" : "border-muted-foreground"
-              }`}
+      <div className="space-y-3 max-w-lg mx-auto">
+        {options.map((opt, i) => {
+          const checked = data[opt.key];
+          const Icon = opt.icon;
+          return (
+            <motion.div
+              key={opt.key}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06 }}
+              className={`option-card flex items-center gap-4 ${checked ? 'selected' : ''}`}
+              onClick={() => onChange({ [opt.key]: !data[opt.key] })}
             >
-              {data[opt.key] && (
-                <svg className="w-3 h-3 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              )}
-            </div>
-            <div>
-              <span className="font-body font-medium text-base">{opt.label}</span>
-              <p className="text-sm text-muted-foreground">{opt.desc}</p>
-            </div>
-          </div>
-        ))}
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 ${
+                checked ? 'bg-accent text-accent-foreground' : 'bg-muted text-muted-foreground'
+              }`}>
+                <Icon className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-baseline gap-2">
+                  <span className="font-body font-medium text-sm">{opt.label}</span>
+                  <span className="text-xs font-semibold text-accent">{opt.price}</span>
+                </div>
+                <p className="text-xs text-muted-foreground">{opt.desc}</p>
+              </div>
+              <div className="option-checkbox">
+                {checked && (
+                  <motion.svg initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-3 h-3 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </motion.svg>
+                )}
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
       <NavigationButtons onPrev={onPrev} onNext={onNext} />
