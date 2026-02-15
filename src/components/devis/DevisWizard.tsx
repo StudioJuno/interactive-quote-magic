@@ -65,6 +65,21 @@ const DevisWizard = () => {
   const next = () => setStep((s) => Math.min(s + 1, subSteps.length - 1));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
+  const goToMainStep = (mainStep: number) => {
+    // Find first sub-step index for each main step
+    const mainStepFirstSub: Record<number, string> = {
+      1: "offre",
+      2: "lieu",
+      3: "remarques",
+      4: "contact",
+    };
+    const target = mainStepFirstSub[mainStep];
+    if (target) {
+      const idx = subSteps.indexOf(target);
+      if (idx !== -1) setStep(idx);
+    }
+  };
+
   const showSummary = getMainStep() >= 2 && (data.nbPhotographes > 0 || data.nbVideastes > 0);
 
   const renderStep = () => {
@@ -101,7 +116,7 @@ const DevisWizard = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center px-4 py-8">
       <div className="w-full max-w-4xl">
-        <StepIndicator currentMainStep={getMainStep()} steps={MAIN_STEPS} />
+        <StepIndicator currentMainStep={getMainStep()} steps={MAIN_STEPS} onStepClick={goToMainStep} />
       </div>
 
       <div className="flex gap-6 w-full max-w-5xl justify-center items-start">
