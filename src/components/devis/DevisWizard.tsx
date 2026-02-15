@@ -5,14 +5,12 @@ import StepIndicator from "./StepIndicator";
 import QuoteSummary from "./QuoteSummary";
 import StepOffre from "./steps/StepOffre";
 import StepCoverage from "./steps/StepCoverage";
-import StepLieu from "./steps/StepLieu";
 import StepInvites from "./steps/StepInvites";
 import StepPrestataires from "./steps/StepPrestataires";
 import StepDateLieu from "./steps/StepDateLieu";
 import StepOptionsSupp from "./steps/StepOptionsSupp";
 import StepFilms from "./steps/StepFilms";
 import StepSupports from "./steps/StepSupports";
-import StepPlageHoraire from "./steps/StepPlageHoraire";
 import StepDelai from "./steps/StepDelai";
 import StepRemarques from "./steps/StepRemarques";
 import StepSource from "./steps/StepSource";
@@ -56,7 +54,7 @@ const DevisWizard = () => {
   }, []);
 
   const subSteps = useMemo(() => {
-    const steps: string[] = ["offre", "coverage", "plage-horaire", "date-lieu"];
+    const steps: string[] = ["offre", "coverage", "date-lieu"];
     steps.push("invites", "prestataires");
     if (data.offerType === "film" || data.offerType === "photos-film") {
       steps.push("options-supp");
@@ -77,7 +75,7 @@ const DevisWizard = () => {
   const currentSubStep = subSteps[step] || "offre";
 
   const getMainStep = () => {
-    if (["offre", "coverage", "plage-horaire", "date-lieu"].includes(currentSubStep)) return 1;
+    if (["offre", "coverage", "date-lieu"].includes(currentSubStep)) return 1;
     if (["invites", "prestataires", "options-supp", "films", "supports", "delai"].includes(currentSubStep)) return 2;
     if (["remarques", "source", "recap"].includes(currentSubStep)) return 3;
     return 4;
@@ -150,7 +148,6 @@ const DevisWizard = () => {
     switch (currentSubStep) {
       case "offre": return <StepOffre data={data} onChange={onChange} onNext={next} />;
       case "coverage": return <StepCoverage data={data} onChange={onChange} onNext={next} onPrev={prev} />;
-      case "plage-horaire": return <StepPlageHoraire data={data} onChange={onChange} onNext={next} onPrev={prev} />;
       case "date-lieu": return <StepDateLieu data={data} onChange={onChange} onNext={next} onPrev={prev} />;
       case "invites": return <StepInvites data={data} onChange={onChange} onNext={next} onPrev={prev} />;
       case "prestataires": return <StepPrestataires data={data} onChange={onChange} onNext={next} onPrev={prev} />;
