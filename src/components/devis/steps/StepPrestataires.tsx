@@ -12,23 +12,33 @@ interface Props {
   onPrev: () => void;
 }
 
-const photographeOptions = [
+const allPhotographeOptions = [
   { value: 0, label: "Aucun photographe", desc: "Pas de photographe" },
   { value: 1, label: "1 photographe", desc: "Économique" },
   { value: 2, label: "2 photographes", desc: "Deux regards complémentaires" },
   { value: 3, label: "3 photographes", desc: "Idéal grands mariages" },
 ];
 
-const videasteOptions = [
+const allVideasteOptions = [
   { value: 0, label: "Aucun vidéaste", desc: "Pas de vidéaste" },
   { value: 1, label: "1 vidéaste", desc: "Économique" },
   { value: 2, label: "2 vidéastes", desc: "Film riche et cinématographique" },
   { value: 3, label: "3 vidéastes", desc: "Rendu immersif et complet" },
 ];
 
+function getMaxPrestataires(nbInvites: string): number {
+  const n = parseInt(nbInvites, 10);
+  if (!n || n < 150) return 1;
+  if (n < 250) return 2;
+  return 3;
+}
+
 const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
   const showPhotographes = data.offerType === "photos" || data.offerType === "photos-film";
   const showVideastes = data.offerType === "film" || data.offerType === "photos-film";
+  const max = getMaxPrestataires(data.nbInvites);
+  const photographeOptions = allPhotographeOptions.filter((o) => o.value <= max);
+  const videasteOptions = allVideasteOptions.filter((o) => o.value <= max);
 
   const handleNext = () => {
     if (showPhotographes && data.nbPhotographes === 0 && showVideastes && data.nbVideastes === 0) {
