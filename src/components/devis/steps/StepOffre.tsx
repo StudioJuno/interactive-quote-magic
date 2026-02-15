@@ -22,7 +22,7 @@ const StepOffre = ({ data, onChange, onNext }: Props) => {
 
       <div className="space-y-3 max-w-md mx-auto">
         {options.map((opt) => (
-          <label
+          <div
             key={opt.value}
             className="flex items-center gap-3 cursor-pointer group"
             onClick={() => onChange({ offerType: opt.value })}
@@ -39,7 +39,7 @@ const StepOffre = ({ data, onChange, onNext }: Props) => {
               )}
             </div>
             <span className="font-body text-base">{opt.label}</span>
-          </label>
+          </div>
         ))}
       </div>
 

@@ -26,7 +26,7 @@ const StepCoverage = ({ data, onChange, onNext, onPrev }: Props) => {
 
       <div className="space-y-4 max-w-md mx-auto">
         {options.map((opt) => (
-          <label
+          <div
             key={opt.value}
             className="flex items-start gap-3 cursor-pointer"
             onClick={() => onChange({ coverageType: opt.value })}
@@ -48,7 +48,7 @@ const StepCoverage = ({ data, onChange, onNext, onPrev }: Props) => {
                 <p className="text-sm text-muted-foreground">{opt.desc}</p>
               )}
             </div>
-          </label>
+          </div>
         ))}
       </div>
 
