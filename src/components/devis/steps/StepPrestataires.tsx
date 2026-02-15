@@ -35,7 +35,7 @@ const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
       <div className="max-w-lg mx-auto space-y-3">
         {showPhotographes &&
           photographeOptions.map((opt) => (
-            <label key={`photo-${opt.value}`} className="flex items-start gap-3 cursor-pointer">
+            <label key={`photo-${opt.value}`} className="flex items-start gap-3 cursor-pointer" onClick={() => onChange({ nbPhotographes: opt.value })}>
               <div
                 className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 transition-all ${
                   data.nbPhotographes === opt.value ? "border-foreground" : "border-muted-foreground"
@@ -45,16 +45,18 @@ const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
                   <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
                 )}
               </div>
-              <div onClick={() => onChange({ nbPhotographes: opt.value })}>
+              <div>
                 <span className="font-body font-medium text-base">{opt.label}</span>
                 <p className="text-sm text-muted-foreground">{opt.desc}</p>
               </div>
             </label>
           ))}
 
+        {showPhotographes && showVideastes && <div className="pt-4" />}
+
         {showVideastes &&
           videasteOptions.map((opt) => (
-            <label key={`video-${opt.value}`} className="flex items-start gap-3 cursor-pointer">
+            <label key={`video-${opt.value}`} className="flex items-start gap-3 cursor-pointer" onClick={() => onChange({ nbVideastes: opt.value })}>
               <div
                 className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 transition-all ${
                   data.nbVideastes === opt.value ? "border-foreground" : "border-muted-foreground"
@@ -64,7 +66,7 @@ const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
                   <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
                 )}
               </div>
-              <div onClick={() => onChange({ nbVideastes: opt.value })}>
+              <div>
                 <span className="font-body font-medium text-base">{opt.label}</span>
                 <p className="text-sm text-muted-foreground">{opt.desc}</p>
               </div>
