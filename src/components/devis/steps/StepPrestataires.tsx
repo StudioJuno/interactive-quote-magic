@@ -26,7 +26,7 @@ const allVideasteOptions = [
   { value: 3, label: "3 vidéastes", desc: "Rendu immersif et complet" },
 ];
 
-function getMaxPrestataires(nbInvites: string): number {
+function getRecommended(nbInvites: string): number {
   const n = parseInt(nbInvites, 10);
   if (!n || n < 150) return 1;
   if (n < 250) return 2;
@@ -36,9 +36,9 @@ function getMaxPrestataires(nbInvites: string): number {
 const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
   const showPhotographes = data.offerType === "photos" || data.offerType === "photos-film";
   const showVideastes = data.offerType === "film" || data.offerType === "photos-film";
-  const max = getMaxPrestataires(data.nbInvites);
-  const photographeOptions = allPhotographeOptions.filter((o) => o.value <= max);
-  const videasteOptions = allVideasteOptions.filter((o) => o.value <= max);
+  const recommended = getRecommended(data.nbInvites);
+  const photographeOptions = allPhotographeOptions;
+  const videasteOptions = allVideasteOptions;
 
   const handleNext = () => {
     if (showPhotographes && data.nbPhotographes === 0 && showVideastes && data.nbVideastes === 0) {
@@ -82,9 +82,12 @@ const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
                       <motion.div className="w-2.5 h-2.5 rounded-full bg-accent" initial={{ scale: 0 }} animate={{ scale: 1 }} />
                     )}
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 flex items-center gap-2">
                     <span className="font-body font-medium text-sm">{opt.label}</span>
-                    <span className="text-xs text-muted-foreground ml-2">— {opt.desc}</span>
+                    <span className="text-xs text-muted-foreground">— {opt.desc}</span>
+                    {opt.value === recommended && opt.value > 0 && (
+                      <span className="text-[10px] font-semibold uppercase tracking-wide bg-accent/15 text-accent px-1.5 py-0.5 rounded-full">Conseillé</span>
+                    )}
                   </div>
                 </motion.div>
               );
@@ -116,9 +119,12 @@ const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
                       <motion.div className="w-2.5 h-2.5 rounded-full bg-accent" initial={{ scale: 0 }} animate={{ scale: 1 }} />
                     )}
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 flex items-center gap-2">
                     <span className="font-body font-medium text-sm">{opt.label}</span>
-                    <span className="text-xs text-muted-foreground ml-2">— {opt.desc}</span>
+                    <span className="text-xs text-muted-foreground">— {opt.desc}</span>
+                    {opt.value === recommended && opt.value > 0 && (
+                      <span className="text-[10px] font-semibold uppercase tracking-wide bg-accent/15 text-accent px-1.5 py-0.5 rounded-full">Conseillé</span>
+                    )}
                   </div>
                 </motion.div>
               );
