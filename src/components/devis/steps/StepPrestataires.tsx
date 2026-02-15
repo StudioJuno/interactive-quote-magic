@@ -20,7 +20,6 @@ const allPhotographeOptions = [
 ];
 
 const allVideasteOptions = [
-  { value: 0, label: "Aucun vidéaste", desc: "Pas de vidéaste" },
   { value: 1, label: "1 vidéaste", desc: "Économique" },
   { value: 2, label: "2 vidéastes", desc: "Film riche et cinématographique" },
   { value: 3, label: "3 vidéastes", desc: "Rendu immersif et complet" },
