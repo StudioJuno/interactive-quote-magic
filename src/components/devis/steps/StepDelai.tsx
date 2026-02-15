@@ -1,5 +1,6 @@
 import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
+import { toast } from "sonner";
 
 interface Props {
   data: QuoteData;
@@ -40,7 +41,10 @@ const StepDelai = ({ data, onChange, onNext, onPrev }: Props) => {
         ))}
       </div>
 
-      <NavigationButtons onPrev={onPrev} onNext={onNext} />
+      <NavigationButtons onPrev={onPrev} onNext={() => {
+        if (!data.delai) { toast.error("Veuillez sélectionner un délai de livraison."); return; }
+        onNext();
+      }} />
     </div>
   );
 };

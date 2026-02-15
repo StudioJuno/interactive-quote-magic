@@ -1,5 +1,6 @@
 import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
+import { toast } from "sonner";
 
 interface Props {
   data: QuoteData;
@@ -43,7 +44,10 @@ const StepOffre = ({ data, onChange, onNext }: Props) => {
         ))}
       </div>
 
-      <NavigationButtons showPrev={false} onNext={onNext} />
+      <NavigationButtons showPrev={false} onNext={() => {
+        if (!data.offerType) { toast.error("Veuillez sélectionner une option."); return; }
+        onNext();
+      }} />
     </div>
   );
 };
