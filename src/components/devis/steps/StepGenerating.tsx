@@ -3,10 +3,11 @@ import { QuoteData, PRICES } from "../types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { Loader2, CheckCircle2, XCircle, Sparkles } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, Sparkles, CalendarDays, CreditCard, FileDown } from "lucide-react";
 
 interface Props {
   data: QuoteData;
+  subtotal: number;
 }
 
 type Status = "loading" | "success" | "error";
@@ -32,7 +33,7 @@ const ConfettiParticle = ({ delay, x }: { delay: number; x: number }) => (
   />
 );
 
-const StepGenerating = ({ data }: Props) => {
+const StepGenerating = ({ data, subtotal }: Props) => {
   const [status, setStatus] = useState<Status>("loading");
   const [quoteNumber, setQuoteNumber] = useState("");
   const [pdfUrl, setPdfUrl] = useState("");
@@ -90,9 +91,16 @@ const StepGenerating = ({ data }: Props) => {
     submit();
   }, []);
 
+  const deposit = Math.round(subtotal * 0.3);
+
+  const handlePayDeposit = () => {
+    // Opens Stripe payment link for 30% deposit - for now redirect to contact
+    window.open(`https://calendly.com/studio-juno/30min`, "_blank");
+  };
+
   if (status === "success") {
     return (
-      <div className="flex flex-col items-center justify-center py-12 relative overflow-hidden">
+      <div className="flex flex-col items-center justify-center py-8 relative overflow-hidden">
         {/* Confetti */}
         {Array.from({ length: 20 }).map((_, i) => (
           <ConfettiParticle key={i} delay={i * 0.08} x={Math.random() * 100} />
@@ -104,19 +112,19 @@ const StepGenerating = ({ data }: Props) => {
           transition={{ type: "spring", stiffness: 200, damping: 15 }}
         >
           <div className="relative">
-            <CheckCircle2 className="w-20 h-20 text-accent" />
+            <CheckCircle2 className="w-16 h-16 text-accent" />
             <motion.div
               className="absolute -top-1 -right-1"
               animate={{ rotate: [0, 15, -15, 0] }}
               transition={{ repeat: Infinity, duration: 2, delay: 1 }}
             >
-              <Sparkles className="w-6 h-6 text-accent" />
+              <Sparkles className="w-5 h-5 text-accent" />
             </motion.div>
           </div>
         </motion.div>
 
         <motion.h1
-          className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3 mt-6"
+          className="text-xl sm:text-2xl font-heading font-bold text-center mb-2 mt-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -126,7 +134,7 @@ const StepGenerating = ({ data }: Props) => {
 
         {quoteNumber && (
           <motion.p
-            className="text-center text-muted-foreground text-sm mb-4"
+            className="text-center text-muted-foreground text-sm mb-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
@@ -144,21 +152,63 @@ const StepGenerating = ({ data }: Props) => {
           Vous recevrez votre devis par email sous peu.
         </motion.p>
 
-        {pdfUrl && (
-          <motion.a
-            href={pdfUrl}
+        {/* Conversion modules */}
+        <motion.div
+          className="w-full max-w-md space-y-3"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+        >
+          {/* Download PDF */}
+          {pdfUrl && (
+            <a
+              href={pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-4 w-full p-4 rounded-xl border border-border bg-card hover:border-accent/40 transition-all group"
+            >
+              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
+                <FileDown className="w-5 h-5 text-accent" />
+              </div>
+              <div className="flex-1 text-left">
+                <p className="text-sm font-semibold text-foreground">Télécharger le devis PDF</p>
+                <p className="text-xs text-muted-foreground">Consultez votre devis détaillé</p>
+              </div>
+            </a>
+          )}
+
+          {/* Book a call */}
+          <a
+            href="https://calendly.com/studio-juno/30min"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-accent text-accent-foreground font-medium hover:brightness-110 transition-all shadow-lg shadow-accent/25"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+            className="flex items-center gap-4 w-full p-4 rounded-xl border border-border bg-card hover:border-accent/40 transition-all group"
           >
-            Télécharger le devis PDF
-          </motion.a>
-        )}
+            <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
+              <CalendarDays className="w-5 h-5 text-accent" />
+            </div>
+            <div className="flex-1 text-left">
+              <p className="text-sm font-semibold text-foreground">Réserver un appel</p>
+              <p className="text-xs text-muted-foreground">Discutons de votre projet en 30 min</p>
+            </div>
+          </a>
+
+          {/* Pay deposit */}
+          <button
+            onClick={handlePayDeposit}
+            className="flex items-center gap-4 w-full p-4 rounded-xl border border-accent/30 bg-accent/5 hover:bg-accent/10 transition-all group text-left"
+          >
+            <div className="w-10 h-10 rounded-lg bg-accent/15 flex items-center justify-center shrink-0">
+              <CreditCard className="w-5 h-5 text-accent" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-foreground">Réserver ma date</p>
+              <p className="text-xs text-muted-foreground">
+                Acompte de 30 % — {deposit.toLocaleString("fr-FR")} €
+              </p>
+            </div>
+          </button>
+        </motion.div>
       </div>
     );
   }
