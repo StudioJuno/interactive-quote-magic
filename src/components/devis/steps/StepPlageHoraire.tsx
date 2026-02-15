@@ -98,17 +98,18 @@ const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
           <label className="font-body text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
             Heure de début
           </label>
-          <div className="flex flex-wrap gap-2">
-            {HOURS.map((h) => (
-              <button
-                key={h}
-                type="button"
-                onClick={() => updateTime(h)}
-                className={`tag-button min-w-[70px] ${timePart === h ? "selected" : ""}`}
-              >
-                {h}
-              </button>
-            ))}
+          <div className="relative">
+            <Clock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <select
+              value={timePart}
+              onChange={(e) => updateTime(e.target.value)}
+              className="wizard-input pl-10 appearance-none cursor-pointer bg-card"
+            >
+              <option value="" disabled>Choisir une heure</option>
+              {HOURS.map((h) => (
+                <option key={h} value={h}>{h}</option>
+              ))}
+            </select>
           </div>
         </div>
 
