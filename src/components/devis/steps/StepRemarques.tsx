@@ -1,5 +1,6 @@
 import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
+import { MessageSquare } from "lucide-react";
 
 interface Props {
   data: QuoteData;
@@ -10,19 +11,25 @@ interface Props {
 
 const StepRemarques = ({ data, onChange, onNext, onPrev }: Props) => {
   return (
-    <div className="animate-fade-in">
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-12">
-        Des remarques quant au rendu pour votre film/photos ?
+    <div>
+      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
+        Remarques
       </h1>
+      <p className="text-center text-muted-foreground text-sm mb-10">
+        Des préférences pour le rendu de vos films ou photos ?
+      </p>
 
       <div className="max-w-md mx-auto">
-        <textarea
-          value={data.remarques}
-          onChange={(e) => onChange({ remarques: e.target.value })}
-          placeholder="Ex: Remarques sur le rendu final"
-          rows={5}
-          className="w-full px-4 py-3 border border-border bg-card font-body text-sm resize-y focus:outline-none focus:ring-1 focus:ring-foreground"
-        />
+        <div className="relative">
+          <MessageSquare className="absolute left-3.5 top-4 w-4 h-4 text-muted-foreground" />
+          <textarea
+            value={data.remarques}
+            onChange={(e) => onChange({ remarques: e.target.value })}
+            placeholder="Ex : Style cinématographique, couleurs chaudes..."
+            rows={5}
+            className="wizard-input pl-10 resize-y"
+          />
+        </div>
       </div>
 
       <NavigationButtons onPrev={onPrev} onNext={onNext} />

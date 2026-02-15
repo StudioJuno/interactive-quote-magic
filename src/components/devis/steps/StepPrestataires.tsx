@@ -1,6 +1,8 @@
 import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
+import { Camera, Video } from "lucide-react";
 
 interface Props {
   data: QuoteData;
@@ -10,17 +12,17 @@ interface Props {
 }
 
 const photographeOptions = [
-  { value: 0, label: "Aucun photographe", desc: "Je n'ai pas besoin de photographe pour cette journée" },
+  { value: 0, label: "Aucun photographe", desc: "Pas de photographe" },
   { value: 1, label: "1 photographe", desc: "Économique" },
-  { value: 2, label: "2 photographes", desc: "Deux regards complémentaires. Plus d'angles, plus de portraits, plus de photos pour raconter votre histoire en détail." },
-  { value: 3, label: "3 photographes", desc: "Idéal pour les grands mariages. Chaque instant est couvert : mariés, invités, ambiance et décor." },
+  { value: 2, label: "2 photographes", desc: "Deux regards complémentaires" },
+  { value: 3, label: "3 photographes", desc: "Idéal grands mariages" },
 ];
 
 const videasteOptions = [
-  { value: 0, label: "Aucun vidéaste", desc: "Je n'ai pas besoin de vidéaste pour cette journée" },
+  { value: 0, label: "Aucun vidéaste", desc: "Pas de vidéaste" },
   { value: 1, label: "1 vidéaste", desc: "Économique" },
-  { value: 2, label: "2 vidéastes", desc: "Deux caméras, deux visions. Un film plus riche, dynamique et cinématographique." },
-  { value: 3, label: "3 vidéastes", desc: "L'expérience grand spectacle. Trois caméras pour un rendu immersif et complet, digne d'un film de cinéma." },
+  { value: 2, label: "2 vidéastes", desc: "Film riche et cinématographique" },
+  { value: 3, label: "3 vidéastes", desc: "Rendu immersif et complet" },
 ];
 
 const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
@@ -28,51 +30,80 @@ const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
   const showVideastes = data.offerType === "film" || data.offerType === "photos-film";
 
   return (
-    <div className="animate-fade-in">
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-8">
-        De combien de prestataires avez-vous besoin ?
+    <div>
+      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
+        Vos prestataires
       </h1>
+      <p className="text-center text-muted-foreground text-sm mb-8">
+        De combien de prestataires avez-vous besoin ?
+      </p>
 
       <div className="max-w-lg mx-auto space-y-3">
-        {showPhotographes &&
-          photographeOptions.map((opt) => (
-            <div key={`photo-${opt.value}`} className="flex items-start gap-3 cursor-pointer" onClick={() => onChange({ nbPhotographes: opt.value })}>
-              <div
-                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 transition-all ${
-                  data.nbPhotographes === opt.value ? "border-foreground" : "border-muted-foreground"
-                }`}
-              >
-                {data.nbPhotographes === opt.value && (
-                  <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
-                )}
-              </div>
-              <div>
-                <span className="font-body font-medium text-base">{opt.label}</span>
-                <p className="text-sm text-muted-foreground">{opt.desc}</p>
-              </div>
+        {showPhotographes && (
+          <>
+            <div className="flex items-center gap-2 mb-2">
+              <Camera className="w-4 h-4 text-accent" />
+              <span className="text-xs font-body font-medium text-muted-foreground uppercase tracking-wider">Photographes</span>
             </div>
-          ))}
+            {photographeOptions.map((opt, i) => {
+              const selected = data.nbPhotographes === opt.value;
+              return (
+                <motion.div
+                  key={`photo-${opt.value}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className={`option-card flex items-center gap-3 py-3 px-4 ${selected ? 'selected' : ''}`}
+                  onClick={() => onChange({ nbPhotographes: opt.value })}
+                >
+                  <div className="option-radio">
+                    {selected && (
+                      <motion.div className="w-2.5 h-2.5 rounded-full bg-accent" initial={{ scale: 0 }} animate={{ scale: 1 }} />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <span className="font-body font-medium text-sm">{opt.label}</span>
+                    <span className="text-xs text-muted-foreground ml-2">{opt.desc}</span>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </>
+        )}
 
-        {showPhotographes && showVideastes && <div className="pt-4" />}
+        {showPhotographes && showVideastes && <div className="pt-2" />}
 
-        {showVideastes &&
-          videasteOptions.map((opt) => (
-            <div key={`video-${opt.value}`} className="flex items-start gap-3 cursor-pointer" onClick={() => onChange({ nbVideastes: opt.value })}>
-              <div
-                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 transition-all ${
-                  data.nbVideastes === opt.value ? "border-foreground" : "border-muted-foreground"
-                }`}
-              >
-                {data.nbVideastes === opt.value && (
-                  <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
-                )}
-              </div>
-              <div>
-                <span className="font-body font-medium text-base">{opt.label}</span>
-                <p className="text-sm text-muted-foreground">{opt.desc}</p>
-              </div>
+        {showVideastes && (
+          <>
+            <div className="flex items-center gap-2 mb-2">
+              <Video className="w-4 h-4 text-accent" />
+              <span className="text-xs font-body font-medium text-muted-foreground uppercase tracking-wider">Vidéastes</span>
             </div>
-          ))}
+            {videasteOptions.map((opt, i) => {
+              const selected = data.nbVideastes === opt.value;
+              return (
+                <motion.div
+                  key={`video-${opt.value}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 + (showPhotographes ? 0.2 : 0) }}
+                  className={`option-card flex items-center gap-3 py-3 px-4 ${selected ? 'selected' : ''}`}
+                  onClick={() => onChange({ nbVideastes: opt.value })}
+                >
+                  <div className="option-radio">
+                    {selected && (
+                      <motion.div className="w-2.5 h-2.5 rounded-full bg-accent" initial={{ scale: 0 }} animate={{ scale: 1 }} />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <span className="font-body font-medium text-sm">{opt.label}</span>
+                    <span className="text-xs text-muted-foreground ml-2">{opt.desc}</span>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </>
+        )}
       </div>
 
       <NavigationButtons onPrev={onPrev} onNext={() => {

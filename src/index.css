@@ -6,75 +6,78 @@
 
 @layer base {
   :root {
-    --background: 0 0% 96%;
-    --foreground: 0 0% 10%;
+    --background: 30 20% 97%;
+    --foreground: 30 10% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 30 10% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover-foreground: 30 10% 12%;
 
-    --primary: 0 0% 10%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 30 10% 12%;
+    --primary-foreground: 30 20% 97%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 10%;
+    --secondary: 30 15% 94%;
+    --secondary-foreground: 30 10% 12%;
 
-    --muted: 0 0% 92%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 30 10% 92%;
+    --muted-foreground: 30 5% 50%;
 
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 10%;
+    --accent: 28 60% 52%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 80%;
-    --input: 0 0% 80%;
-    --ring: 0 0% 10%;
+    --border: 30 10% 85%;
+    --input: 30 10% 85%;
+    --ring: 28 60% 52%;
 
-    --radius: 0rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 10%;
-    --sidebar-primary: 0 0% 10%;
+    --sidebar-foreground: 30 10% 12%;
+    --sidebar-primary: 30 10% 12%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 0 0% 10%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 0 0% 10%;
+    --sidebar-accent: 30 15% 94%;
+    --sidebar-accent-foreground: 30 10% 12%;
+    --sidebar-border: 30 10% 90%;
+    --sidebar-ring: 30 10% 12%;
 
-    --step-active: 0 0% 10%;
+    --step-active: 28 60% 52%;
     --step-active-foreground: 0 0% 100%;
-    --step-inactive: 0 0% 75%;
-    --step-line: 0 0% 10%;
-    --step-line-inactive: 0 0% 80%;
+    --step-inactive: 30 10% 78%;
+    --step-line: 28 60% 52%;
+    --step-line-inactive: 30 10% 88%;
 
-    --summary-bg: 0 0% 100%;
-    --summary-accent: 25 95% 50%;
+    --summary-bg: 30 20% 97%;
+    --summary-accent: 28 60% 52%;
+
+    --gold: 38 70% 55%;
+    --gold-light: 38 50% 90%;
   }
 
   .dark {
-    --background: 0 0% 5%;
-    --foreground: 0 0% 95%;
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 8%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 0 0% 95%;
-    --primary-foreground: 0 0% 5%;
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 60%;
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 95%;
+    --background: 30 10% 6%;
+    --foreground: 30 10% 92%;
+    --card: 30 10% 10%;
+    --card-foreground: 30 10% 92%;
+    --popover: 30 10% 10%;
+    --popover-foreground: 30 10% 92%;
+    --primary: 30 10% 92%;
+    --primary-foreground: 30 10% 6%;
+    --secondary: 30 10% 15%;
+    --secondary-foreground: 30 10% 92%;
+    --muted: 30 10% 18%;
+    --muted-foreground: 30 5% 55%;
+    --accent: 28 60% 52%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 95%;
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 0% 80%;
+    --destructive-foreground: 30 10% 92%;
+    --border: 30 10% 22%;
+    --input: 30 10% 22%;
+    --ring: 28 60% 52%;
   }
 }
 
@@ -89,5 +92,41 @@
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;
+  }
+}
+
+@layer components {
+  .option-card {
+    @apply relative border border-border bg-card p-5 cursor-pointer transition-all duration-300 rounded-lg;
+    @apply hover:border-accent hover:shadow-md;
+  }
+  
+  .option-card.selected {
+    @apply border-accent bg-accent/5 shadow-md;
+  }
+
+  .option-radio {
+    @apply w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 flex-shrink-0;
+  }
+
+  .option-checkbox {
+    @apply w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 flex-shrink-0;
+  }
+
+  .wizard-input {
+    @apply w-full px-4 py-3.5 border border-border bg-card font-body text-sm rounded-lg transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent;
+  }
+
+  .tag-button {
+    @apply px-4 py-2.5 border rounded-full text-sm font-body transition-all duration-200;
+  }
+  
+  .tag-button.selected {
+    @apply border-accent bg-accent text-accent-foreground shadow-sm;
+  }
+  
+  .tag-button:not(.selected) {
+    @apply border-border hover:border-accent/50 hover:bg-accent/5;
   }
 }

@@ -1,6 +1,8 @@
 import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
+import { Calendar, CalendarDays } from "lucide-react";
 
 interface Props {
   data: QuoteData;
@@ -11,68 +13,71 @@ interface Props {
 
 const StepCoverage = ({ data, onChange, onNext, onPrev }: Props) => {
   const options = [
-    { value: "jour-j" as const, label: "Uniquement le jour J", desc: "" },
-    {
-      value: "autres-moments" as const,
-      label: "Également couvrir d'autres moments",
-      desc: "mairie, brunch du lendemain, etc.",
-    },
+    { value: "jour-j" as const, label: "Uniquement le jour J", desc: "Couverture complète le jour du mariage", icon: Calendar },
+    { value: "autres-moments" as const, label: "Couvrir d'autres moments", desc: "Mairie, brunch du lendemain, etc.", icon: CalendarDays },
   ];
 
   return (
-    <div className="animate-fade-in">
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-12">
+    <div>
+      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
         Que souhaitez-vous couvrir ?
       </h1>
+      <p className="text-center text-muted-foreground text-sm mb-10">
+        Définissez l'étendue de votre couverture
+      </p>
 
-      <div className="space-y-4 max-w-md mx-auto">
-        {options.map((opt) => (
-          <div
-            key={opt.value}
-            className="flex items-start gap-3 cursor-pointer"
-            onClick={() => onChange({ coverageType: opt.value })}
-          >
-            <div
-              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 transition-all ${
-                data.coverageType === opt.value
-                  ? "border-foreground"
-                  : "border-muted-foreground"
-              }`}
+      <div className="grid gap-3 max-w-md mx-auto">
+        {options.map((opt, i) => {
+          const selected = data.coverageType === opt.value;
+          const Icon = opt.icon;
+          return (
+            <motion.div
+              key={opt.value}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.08 }}
+              onClick={() => onChange({ coverageType: opt.value })}
+              className={`option-card flex items-center gap-4 ${selected ? 'selected' : ''}`}
             >
-              {data.coverageType === opt.value && (
-                <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
-              )}
-            </div>
-            <div>
-              <span className="font-body text-base">{opt.label}</span>
-              {opt.desc && (
-                <p className="text-sm text-muted-foreground">{opt.desc}</p>
-              )}
-            </div>
-          </div>
-        ))}
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 ${
+                selected ? 'bg-accent text-accent-foreground' : 'bg-muted text-muted-foreground'
+              }`}>
+                <Icon className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <span className="font-body font-medium text-base">{opt.label}</span>
+                <p className="text-xs text-muted-foreground">{opt.desc}</p>
+              </div>
+              <div className="option-radio">
+                {selected && (
+                  <motion.div className="w-2.5 h-2.5 rounded-full bg-accent" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 500 }} />
+                )}
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
       {data.coverageType === "autres-moments" && (
-        <div className="mt-8 max-w-md mx-auto">
-          <p className="font-body text-base mb-3">Combien de jours au total ?</p>
+        <motion.div
+          className="mt-8 max-w-md mx-auto"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+        >
+          <p className="font-body text-sm mb-3 text-muted-foreground">Combien de jours au total ?</p>
           <div className="flex gap-3">
             {[2, 3, 4, 5].map((n) => (
               <button
                 key={n}
                 type="button"
                 onClick={() => onChange({ nbJours: n })}
-                className={`px-5 py-2 border text-sm font-body transition-all ${
-                  data.nbJours === n
-                    ? "border-foreground bg-foreground text-background"
-                    : "border-border hover:border-foreground"
-                }`}
+                className={`tag-button flex-1 ${data.nbJours === n ? 'selected' : ''}`}
               >
                 {n} jours
               </button>
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
 
       <NavigationButtons onPrev={onPrev} onNext={() => {

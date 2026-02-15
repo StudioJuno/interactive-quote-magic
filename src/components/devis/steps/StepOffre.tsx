@@ -1,6 +1,8 @@
 import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
+import { Film, Camera, Clapperboard } from "lucide-react";
 
 interface Props {
   data: QuoteData;
@@ -10,38 +12,55 @@ interface Props {
 
 const StepOffre = ({ data, onChange, onNext }: Props) => {
   const options = [
-    { value: "film" as const, label: "Film uniquement" },
-    { value: "photos" as const, label: "Photos uniquement" },
-    { value: "photos-film" as const, label: "Photos et Film" },
+    { value: "film" as const, label: "Film uniquement", icon: Film, desc: "Captation vidéo de votre journée" },
+    { value: "photos" as const, label: "Photos uniquement", icon: Camera, desc: "Reportage photo complet" },
+    { value: "photos-film" as const, label: "Photos et Film", icon: Clapperboard, desc: "La formule complète" },
   ];
 
   return (
-    <div className="animate-fade-in">
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-12">
+    <div>
+      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
         Que souhaitez-vous ?
       </h1>
+      <p className="text-center text-muted-foreground text-sm mb-10">
+        Choisissez le type de prestation qui vous correspond
+      </p>
 
-      <div className="space-y-3 max-w-md mx-auto">
-        {options.map((opt) => (
-          <div
-            key={opt.value}
-            className="flex items-center gap-3 cursor-pointer group"
-            onClick={() => onChange({ offerType: opt.value })}
-          >
-            <div
-              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                data.offerType === opt.value
-                  ? "border-foreground"
-                  : "border-muted-foreground"
-              }`}
+      <div className="grid gap-3 max-w-md mx-auto">
+        {options.map((opt, i) => {
+          const selected = data.offerType === opt.value;
+          const Icon = opt.icon;
+          return (
+            <motion.div
+              key={opt.value}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.08 }}
+              onClick={() => onChange({ offerType: opt.value })}
+              className={`option-card flex items-center gap-4 ${selected ? 'selected' : ''}`}
             >
-              {data.offerType === opt.value && (
-                <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
-              )}
-            </div>
-            <span className="font-body text-base">{opt.label}</span>
-          </div>
-        ))}
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 ${
+                selected ? 'bg-accent text-accent-foreground' : 'bg-muted text-muted-foreground'
+              }`}>
+                <Icon className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <span className="font-body font-medium text-base">{opt.label}</span>
+                <p className="text-xs text-muted-foreground">{opt.desc}</p>
+              </div>
+              <div className="option-radio">
+                {selected && (
+                  <motion.div
+                    className="w-2.5 h-2.5 rounded-full bg-accent"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 500 }}
+                  />
+                )}
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
       <NavigationButtons showPrev={false} onNext={() => {
