@@ -82,14 +82,8 @@ const StepRecap = ({ data, onChange, onNext, onPrev }: Props) => {
           ))}
         </div>
 
-        <div className="border-t border-border pt-4 mb-2">
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">Livraison {data.delai === "express" ? "Express" : "Standard"}</span>
-          </div>
-        </div>
-
         <div className="flex justify-between items-center mt-3 mb-6 bg-accent/5 border border-accent/15 rounded-xl px-4 py-3">
-          <span className="text-sm font-medium">Total HT</span>
+          <span className="text-sm font-medium">Total TTC</span>
           <motion.span
             key={subtotal}
             initial={{ scale: 0.9 }}
