@@ -14,7 +14,9 @@ const QuoteSummary = ({ data, onClose, isMobile }: QuoteSummaryProps) => {
       ? "Photos & Vidéo"
       : data.offerType === "film"
       ? "Vidéo"
-      : "Photos";
+      : data.offerType === "photos"
+      ? "Photos"
+      : "Votre devis";
 
   const lines: { label: string; price: number }[] = [];
 
@@ -42,13 +44,22 @@ const QuoteSummary = ({ data, onClose, isMobile }: QuoteSummaryProps) => {
 
   const subtotal = lines.reduce((sum, l) => sum + l.price, 0);
 
-  if (lines.length === 0) return null;
+  // Date display
+  const dateDisplay = data.dateHeure
+    ? new Date(data.dateHeure).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })
+    : "";
+  const timeDisplay = data.dateHeure
+    ? data.dateHeure.split("T")[1]?.substring(0, 5) || ""
+    : "";
+
+  const hasAnyInfo = data.offerType !== "" || lines.length > 0;
+  if (!hasAnyInfo) return null;
 
   return (
     <div className={`bg-card border border-border rounded-xl p-6 font-body ${isMobile ? 'w-full' : 'w-72'}`}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Receipt className="w-4 h-4 text-accent" />
+          <Receipt className="w-4 h-4 text-foreground" />
           <h3 className="text-sm font-heading font-semibold">{label}</h3>
         </div>
         {isMobile && onClose && (
@@ -58,41 +69,76 @@ const QuoteSummary = ({ data, onClose, isMobile }: QuoteSummaryProps) => {
         )}
       </div>
 
-      {data.dateMariage && (
-        <p className="text-accent font-medium text-xs mb-3 bg-accent/10 px-3 py-1.5 rounded-full inline-block">
-          📍 {data.dateMariage}
+      {/* Date & time */}
+      {dateDisplay && (
+        <p className="font-medium text-xs mb-1">
+          {dateDisplay}{timeDisplay ? `, ${timeDisplay}` : ""}{data.nbHeuresCouverture ? ` (${data.nbHeuresCouverture}h)` : ""}
         </p>
       )}
 
-      <div className="space-y-2">
-        <AnimatePresence mode="popLayout">
-          {lines.map((line, i) => (
-            <motion.div
-              key={line.label}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 10 }}
-              transition={{ delay: i * 0.05 }}
-              className="flex justify-between text-sm"
-            >
-              <span className="text-muted-foreground">{line.label}</span>
-              <span className="font-medium">{line.price} €</span>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+      {/* Moments */}
+      {data.moments.length > 0 && (
+        <p className="text-muted-foreground text-xs mb-3">{data.moments.join(", ")}</p>
+      )}
 
-      <div className="border-t border-border mt-4 pt-3">
-        <motion.div
-          className="flex justify-between items-center"
-          key={subtotal}
-          initial={{ scale: 0.95 }}
-          animate={{ scale: 1 }}
-        >
-          <span className="text-sm font-medium">Total</span>
-          <span className="text-xl font-heading font-bold text-accent">{subtotal} €</span>
-        </motion.div>
-      </div>
+      {/* Lieu */}
+      {data.lieu && (
+        <p className="text-muted-foreground text-xs mb-3">📍 {data.lieu}</p>
+      )}
+
+      {/* Coverage type */}
+      {data.coverageType && !dateDisplay && (
+        <p className="text-muted-foreground text-xs mb-3">
+          {data.coverageType === "jour-j" ? "Jour J uniquement" : `${data.nbJours} jours`}
+        </p>
+      )}
+
+      {lines.length > 0 && (
+        <>
+          <div className="space-y-2">
+            <AnimatePresence mode="popLayout">
+              {lines.map((line, i) => (
+                <motion.div
+                  key={line.label}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="flex justify-between text-sm"
+                >
+                  <span className="text-muted-foreground">{line.label}</span>
+                  <span className="font-medium">{line.price} €</span>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+
+          <div className="border-t border-border mt-4 pt-3">
+            <motion.div
+              className="flex justify-between items-center"
+              key={subtotal}
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+            >
+              <span className="text-sm font-medium">Total</span>
+              <span className="text-xl font-heading font-bold">{subtotal} €</span>
+            </motion.div>
+          </div>
+        </>
+      )}
+
+      {lines.length === 0 && (
+        <p className="text-xs text-muted-foreground italic">
+          Vos options apparaîtront ici au fur et à mesure
+        </p>
+      )}
+
+      {/* Délai */}
+      {data.delai && (
+        <p className="text-xs font-medium mt-3">
+          Livraison {data.delai === "express" ? "Express" : "Standard"}
+        </p>
+      )}
     </div>
   );
 };

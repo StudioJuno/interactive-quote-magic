@@ -108,7 +108,7 @@ const DevisWizard = () => {
     }
   };
 
-  const showSummary = getMainStep() >= 2 && (data.nbPhotographes > 0 || data.nbVideastes > 0);
+  const showSummary = data.offerType !== "";
 
   const renderStep = () => {
     switch (currentSubStep) {
