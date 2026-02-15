@@ -46,7 +46,7 @@ const StepFilms = ({ data, onChange, onNext, onPrev }: Props) => {
 
       <div className="space-y-5 max-w-lg mx-auto">
         {options.map((opt) => (
-          <label key={opt.key} className="flex items-start gap-3 cursor-pointer">
+          <label key={opt.key} className="flex items-start gap-3 cursor-pointer" onClick={() => onChange({ [opt.key]: !data[opt.key] })}>
             <div
               className={`w-5 h-5 border-2 flex items-center justify-center mt-0.5 transition-all ${
                 data[opt.key] ? "border-foreground bg-foreground" : "border-muted-foreground"
@@ -58,7 +58,7 @@ const StepFilms = ({ data, onChange, onNext, onPrev }: Props) => {
                 </svg>
               )}
             </div>
-            <div onClick={() => onChange({ [opt.key]: !data[opt.key] })}>
+            <div>
               <span className="font-body font-medium text-base">{opt.label}</span>
               <p className="text-sm text-muted-foreground">{opt.desc}</p>
             </div>

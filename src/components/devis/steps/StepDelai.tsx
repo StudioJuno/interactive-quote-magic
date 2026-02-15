@@ -22,7 +22,7 @@ const StepDelai = ({ data, onChange, onNext, onPrev }: Props) => {
 
       <div className="space-y-4 max-w-md mx-auto">
         {options.map((opt) => (
-          <label key={opt.value} className="flex items-start gap-3 cursor-pointer">
+          <label key={opt.value} className="flex items-start gap-3 cursor-pointer" onClick={() => onChange({ delai: opt.value })}>
             <div
               className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 transition-all ${
                 data.delai === opt.value ? "border-foreground" : "border-muted-foreground"
@@ -32,7 +32,7 @@ const StepDelai = ({ data, onChange, onNext, onPrev }: Props) => {
                 <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
               )}
             </div>
-            <div onClick={() => onChange({ delai: opt.value })}>
+            <div>
               <span className="font-body text-base">{opt.label}</span>
               {opt.desc && <p className="text-sm text-muted-foreground">{opt.desc}</p>}
             </div>

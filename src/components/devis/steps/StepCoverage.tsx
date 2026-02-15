@@ -29,6 +29,7 @@ const StepCoverage = ({ data, onChange, onNext, onPrev }: Props) => {
           <label
             key={opt.value}
             className="flex items-start gap-3 cursor-pointer"
+            onClick={() => onChange({ coverageType: opt.value })}
           >
             <div
               className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 transition-all ${
