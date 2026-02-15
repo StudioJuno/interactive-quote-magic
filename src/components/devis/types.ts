@@ -2,6 +2,7 @@ export interface QuoteData {
   // Step 1 - Offre
   offerType: "film" | "photos" | "photos-film" | "";
   coverageType: "jour-j" | "autres-moments" | "";
+  nbJours: number;
 
   // Step 2 - Prestation
   lieu: string;
@@ -41,6 +42,7 @@ export interface QuoteData {
 export const initialQuoteData: QuoteData = {
   offerType: "",
   coverageType: "",
+  nbJours: 2,
   lieu: "",
   departement: "75",
   nbInvites: "",

@@ -52,6 +52,28 @@ const StepCoverage = ({ data, onChange, onNext, onPrev }: Props) => {
         ))}
       </div>
 
+      {data.coverageType === "autres-moments" && (
+        <div className="mt-8 max-w-md mx-auto">
+          <p className="font-body text-base mb-3">Combien de jours au total ?</p>
+          <div className="flex gap-3">
+            {[2, 3, 4, 5].map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => onChange({ nbJours: n })}
+                className={`px-5 py-2 border text-sm font-body transition-all ${
+                  data.nbJours === n
+                    ? "border-foreground bg-foreground text-background"
+                    : "border-border hover:border-foreground"
+                }`}
+              >
+                {n} jours
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <NavigationButtons onPrev={onPrev} onNext={onNext} />
     </div>
   );
