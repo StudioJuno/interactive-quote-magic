@@ -197,14 +197,33 @@ const EventCard = ({
   );
 };
 
+const MOMENTS = [
+  "Séance pré-engagement",
+  "Préparatifs",
+  "Cérémonie civile",
+  "Cérémonie religieuse/laïque",
+  "Cocktail / vin d'honneur",
+  "Soirée",
+  "Mairie",
+  "Brunch lendemain",
+  "Autre",
+];
+
 const StepDateLieu = ({ data, onChange, onNext, onPrev }: Props) => {
   const needsMultiple = data.moments.length >= 2;
   const events = data.events.length > 0 ? data.events : [{ dateHeure: "", lieu: "", departement: "75", nbHeuresCouverture: 10 }];
 
+  const toggleMoment = (moment: string) => {
+    const current = data.moments;
+    const updated = current.includes(moment)
+      ? current.filter((m) => m !== moment)
+      : [...current, moment];
+    onChange({ moments: updated });
+  };
+
   const updateEvent = (index: number, updated: EventEntry) => {
     const newEvents = [...events];
     newEvents[index] = updated;
-    // Sync first event to flat fields for backward compat
     const first = newEvents[0];
     onChange({
       events: newEvents,
@@ -251,18 +270,44 @@ const StepDateLieu = ({ data, onChange, onNext, onPrev }: Props) => {
   return (
     <div>
       <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-2">
-        {needsMultiple ? "Vos dates & lieux" : "Date & lieu"}
+        Date, lieu & moments
       </h1>
       <p className="text-center text-muted-foreground text-sm mb-6">
-        {needsMultiple
-          ? "Renseignez les informations pour chaque moment"
-          : "Quand et où aura lieu votre mariage ?"}
-      </p>
-      <p className="text-xs text-accent italic font-medium text-center mb-6">
-        Les frais de déplacement sont toujours offerts ✨
+        Définissez les détails de votre événement
       </p>
 
-      <div className="max-w-lg mx-auto space-y-4">
+      <div className="max-w-lg mx-auto space-y-6">
+        {/* Moments à capturer */}
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-2 block">Moments à capturer</label>
+          <div className="flex flex-wrap gap-2">
+            {MOMENTS.map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => toggleMoment(m)}
+                className={`tag-button ${data.moments.includes(m) ? "selected" : ""}`}
+              >
+                {m}
+              </button>
+            ))}
+          </div>
+          {data.moments.length >= 2 && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-xs text-accent font-medium mt-2 bg-accent/5 border border-accent/15 px-3 py-2 rounded-xl"
+            >
+              Vous pouvez ajouter plusieurs jours ci-dessous.
+            </motion.p>
+          )}
+        </div>
+
+        <p className="text-xs text-accent italic font-medium text-center">
+          Les frais de déplacement sont toujours offerts ✨
+        </p>
+
+        {/* Event cards */}
         <AnimatePresence mode="popLayout">
           {events.map((event, i) => (
             <EventCard
