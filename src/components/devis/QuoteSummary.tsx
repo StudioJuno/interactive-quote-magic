@@ -129,7 +129,7 @@ const QuoteSummary = ({ data, onClose, isMobile }: QuoteSummaryProps) => {
 
           <div className="border-t border-border pt-3">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">Total HT</span>
+              <span className="text-sm font-medium">Total TTC</span>
               <AnimatedPrice value={subtotal} />
             </div>
           </div>
@@ -142,12 +142,6 @@ const QuoteSummary = ({ data, onClose, isMobile }: QuoteSummaryProps) => {
         </p>
       )}
 
-      {/* Délai */}
-      {data.delai && (
-        <p className="text-xs font-medium mt-3 text-muted-foreground">
-          🚀 Livraison {data.delai === "express" ? "Express" : "Standard"}
-        </p>
-      )}
     </div>
   );
 };
