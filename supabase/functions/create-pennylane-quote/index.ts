@@ -27,10 +27,10 @@ serve(async (req) => {
 
     const body = await req.json();
     const {
-      nom, prenom, email, telephone, adresse,
-      offerType, dateHeure, nbHeuresCouverture, moments, lieu, departement, nbInvites,
+      nom, prenom, email, email2, telephone, telephone2, adresse,
+      offerType, dateHeure, nbHeuresCouverture, moments, events, lieu, departement, nbInvites,
       nbPhotographes, nbVideastes,
-      optionDrone, optionInterviews,
+      optionDrone, optionInterviews, optionDiscours,
       filmTeaser, filmSignature, filmReseaux, filmBetisier,
       albumPhoto, coffretUSB,
       delai, remarques, source, sourceAutre, prices,
@@ -111,9 +111,19 @@ serve(async (req) => {
     }
     if (optionInterviews) {
       invoiceLines.push({
-        label: "Interviews",
+        label: "Interviews / témoignages",
         quantity: 1,
         raw_currency_unit_price: String(prices?.interviews || 100),
+        unit: "piece",
+        vat_rate: "FR_200",
+        section_rank: 0,
+      });
+    }
+    if (optionDiscours) {
+      invoiceLines.push({
+        label: "Discours",
+        quantity: 1,
+        raw_currency_unit_price: String(prices?.discours || 100),
         unit: "piece",
         vat_rate: "FR_200",
         section_rank: 0,
@@ -236,7 +246,8 @@ serve(async (req) => {
         country_alpha2: "FR",
       },
     };
-    if (email) customerBody.emails = [email];
+    const customerEmails = [email, email2].filter(Boolean);
+    if (customerEmails.length > 0) customerBody.emails = customerEmails;
     if (telephone) customerBody.phone = telephone;
 
     console.log("Creating customer:", JSON.stringify(customerBody, null, 2));
