@@ -5,9 +5,12 @@ interface StepIndicatorProps {
   currentMainStep: number;
   steps: { label: string }[];
   onStepClick?: (stepNum: number) => void;
+  stepSummaries?: Record<number, string>;
+  currentSubStepIndex?: number;
+  totalSubSteps?: number;
 }
 
-const StepIndicator = ({ currentMainStep, steps, onStepClick }: StepIndicatorProps) => {
+const StepIndicator = ({ currentMainStep, steps, onStepClick, stepSummaries, currentSubStepIndex, totalSubSteps }: StepIndicatorProps) => {
   const totalSteps = steps.length;
   const progress = ((currentMainStep - 1) / (totalSteps - 1)) * 100;
 
@@ -24,20 +27,21 @@ const StepIndicator = ({ currentMainStep, steps, onStepClick }: StepIndicatorPro
       </div>
 
       {/* Steps */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between">
         {steps.map((step, index) => {
           const stepNum = index + 1;
           const isCompleted = stepNum < currentMainStep;
           const isCurrent = stepNum === currentMainStep;
           const isClickable = stepNum <= currentMainStep;
+          const summary = stepSummaries?.[stepNum];
 
           return (
             <button
               key={index}
               onClick={() => isClickable && onStepClick?.(stepNum)}
               disabled={!isClickable}
-              className={`flex flex-col items-center gap-2 transition-all duration-300 ${
-                isClickable ? "cursor-pointer" : "cursor-default opacity-40"
+              className={`flex flex-col items-center gap-1.5 transition-all duration-300 min-w-0 flex-1 ${
+                isClickable ? "cursor-pointer" : "cursor-default opacity-35"
               }`}
             >
               <motion.div
@@ -45,7 +49,7 @@ const StepIndicator = ({ currentMainStep, steps, onStepClick }: StepIndicatorPro
                   isCompleted
                     ? "bg-accent text-accent-foreground"
                     : isCurrent
-                    ? "bg-accent text-accent-foreground shadow-lg shadow-accent/25"
+                    ? "bg-accent text-accent-foreground shadow-lg shadow-accent/30"
                     : "bg-muted text-muted-foreground"
                 }`}
                 whileHover={isClickable ? { scale: 1.1 } : {}}
@@ -65,10 +69,31 @@ const StepIndicator = ({ currentMainStep, steps, onStepClick }: StepIndicatorPro
               >
                 {step.label}
               </span>
+              {isCompleted && summary && (
+                <motion.span
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-[10px] text-muted-foreground truncate max-w-[80px]"
+                >
+                  {summary}
+                </motion.span>
+              )}
             </button>
           );
         })}
       </div>
+
+      {/* Step counter */}
+      {currentSubStepIndex !== undefined && totalSubSteps !== undefined && (
+        <motion.p
+          key={currentSubStepIndex}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center text-[11px] text-muted-foreground mt-4 font-body"
+        >
+          Étape {currentSubStepIndex + 1} sur {totalSubSteps}
+        </motion.p>
+      )}
     </div>
   );
 };

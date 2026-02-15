@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { QuoteData, initialQuoteData } from "./types";
+import { QuoteData, initialQuoteData, PRICES } from "./types";
 import StepIndicator from "./StepIndicator";
 import QuoteSummary from "./QuoteSummary";
 import StepOffre from "./steps/StepOffre";
@@ -29,18 +29,18 @@ const MAIN_STEPS = [
 
 const pageVariants = {
   initial: (direction: number) => ({
-    x: direction > 0 ? 80 : -80,
+    x: direction > 0 ? 60 : -60,
     opacity: 0,
   }),
   animate: {
     x: 0,
     opacity: 1,
-    transition: { duration: 0.35, ease: "easeOut" as const },
+    transition: { duration: 0.3, ease: "easeOut" as const },
   },
   exit: (direction: number) => ({
-    x: direction > 0 ? -80 : 80,
+    x: direction > 0 ? -60 : 60,
     opacity: 0,
-    transition: { duration: 0.25, ease: "easeIn" as const },
+    transition: { duration: 0.2, ease: "easeIn" as const },
   }),
 };
 
@@ -82,6 +82,23 @@ const DevisWizard = () => {
     return 4;
   };
 
+  // Build step summaries for completed main steps
+  const stepSummaries = useMemo(() => {
+    const summaries: Record<number, string> = {};
+    const mainStep = getMainStep();
+    if (mainStep > 1 && data.offerType) {
+      const labels: Record<string, string> = { film: "Vidéo", photos: "Photos", "photos-film": "Photos & Film" };
+      summaries[1] = labels[data.offerType] || "";
+    }
+    if (mainStep > 2 && data.lieu) {
+      summaries[2] = data.lieu;
+    }
+    if (mainStep > 3) {
+      summaries[3] = "✓";
+    }
+    return summaries;
+  }, [data.offerType, data.lieu, getMainStep()]);
+
   const next = () => {
     setDirection(1);
     setStep((s) => Math.min(s + 1, subSteps.length - 1));
@@ -110,6 +127,23 @@ const DevisWizard = () => {
 
   const showSummary = data.offerType !== "";
 
+  // Calculate total for mobile FAB
+  const total = useMemo(() => {
+    let t = 0;
+    t += data.nbVideastes * PRICES.vidéaste;
+    t += data.nbPhotographes * PRICES.photographe;
+    if (data.optionDrone) t += PRICES.drone;
+    if (data.optionInterviews) t += PRICES.interviews;
+    if (data.filmTeaser) t += PRICES.teaser;
+    if (data.filmSignature) t += PRICES.signature;
+    if (data.filmReseaux) t += PRICES.reseaux;
+    if (data.filmBetisier) t += PRICES.betisier;
+    if (data.albumPhoto) t += PRICES.album;
+    if (data.coffretUSB) t += PRICES.coffret;
+    if (data.delai === "express") t += PRICES.express;
+    return t;
+  }, [data]);
+
   const renderStep = () => {
     switch (currentSubStep) {
       case "offre": return <StepOffre data={data} onChange={onChange} onNext={next} />;
@@ -134,7 +168,14 @@ const DevisWizard = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center px-4 py-8 sm:py-12">
       <div className="w-full max-w-4xl">
-        <StepIndicator currentMainStep={getMainStep()} steps={MAIN_STEPS} onStepClick={goToMainStep} />
+        <StepIndicator
+          currentMainStep={getMainStep()}
+          steps={MAIN_STEPS}
+          onStepClick={goToMainStep}
+          stepSummaries={stepSummaries}
+          currentSubStepIndex={step}
+          totalSubSteps={subSteps.length - 1} // exclude "generating"
+        />
       </div>
 
       <div className="flex gap-8 w-full max-w-5xl justify-center items-start">
@@ -166,16 +207,27 @@ const DevisWizard = () => {
         )}
       </div>
 
+      {/* Mobile FAB with price */}
       {showSummary && (
         <motion.button
-          className="lg:hidden fixed bottom-6 right-6 w-14 h-14 rounded-full bg-accent text-accent-foreground shadow-xl shadow-accent/30 flex items-center justify-center z-50"
+          className="lg:hidden fixed bottom-6 right-6 h-14 px-5 rounded-full bg-accent text-accent-foreground shadow-xl shadow-accent/30 flex items-center gap-2.5 z-50"
           onClick={() => setShowMobileSummary(true)}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
         >
           <Receipt className="w-5 h-5" />
+          {total > 0 && (
+            <motion.span
+              key={total}
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              className="font-body font-semibold text-sm"
+            >
+              {total.toLocaleString("fr-FR")} €
+            </motion.span>
+          )}
         </motion.button>
       )}
 

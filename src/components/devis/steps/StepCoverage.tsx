@@ -3,6 +3,8 @@ import NavigationButtons from "../NavigationButtons";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Calendar, CalendarDays } from "lucide-react";
+import { useAutoAdvance } from "@/hooks/useAutoAdvance";
+import { useWizardKeyboard } from "@/hooks/useWizardKeyboard";
 
 interface Props {
   data: QuoteData;
@@ -17,9 +19,18 @@ const StepCoverage = ({ data, onChange, onNext, onPrev }: Props) => {
     { value: "autres-moments" as const, label: "Couvrir d'autres moments", desc: "Mairie, brunch du lendemain, etc.", icon: CalendarDays },
   ];
 
+  const handleNext = () => {
+    if (!data.coverageType) { toast.error("Veuillez sélectionner une option."); return; }
+    onNext();
+  };
+
+  // Only auto-advance for "jour-j" (single day has no follow-up)
+  useAutoAdvance(data.coverageType, handleNext, { enabled: data.coverageType === "jour-j" });
+  useWizardKeyboard({ onNext: handleNext, onPrev });
+
   return (
     <div>
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
+      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-2">
         Que souhaitez-vous couvrir ?
       </h1>
       <p className="text-center text-muted-foreground text-sm mb-10">
@@ -39,14 +50,14 @@ const StepCoverage = ({ data, onChange, onNext, onPrev }: Props) => {
               onClick={() => onChange({ coverageType: opt.value })}
               className={`option-card flex items-center gap-4 ${selected ? 'selected' : ''}`}
             >
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 ${
-                selected ? 'bg-accent text-accent-foreground' : 'bg-muted text-muted-foreground'
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                selected ? 'bg-accent text-accent-foreground scale-110' : 'bg-muted text-muted-foreground'
               }`}>
                 <Icon className="w-5 h-5" />
               </div>
               <div className="flex-1">
                 <span className="font-body font-medium text-base">{opt.label}</span>
-                <p className="text-xs text-muted-foreground">{opt.desc}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
               </div>
               <div className="option-radio">
                 {selected && (
@@ -80,10 +91,7 @@ const StepCoverage = ({ data, onChange, onNext, onPrev }: Props) => {
         </motion.div>
       )}
 
-      <NavigationButtons onPrev={onPrev} onNext={() => {
-        if (!data.coverageType) { toast.error("Veuillez sélectionner une option."); return; }
-        onNext();
-      }} />
+      <NavigationButtons onPrev={onPrev} onNext={handleNext} />
     </div>
   );
 };

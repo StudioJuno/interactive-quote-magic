@@ -3,13 +3,34 @@ import { QuoteData, PRICES } from "../types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, Sparkles } from "lucide-react";
 
 interface Props {
   data: QuoteData;
 }
 
 type Status = "loading" | "success" | "error";
+
+// Confetti particle component
+const ConfettiParticle = ({ delay, x }: { delay: number; x: number }) => (
+  <motion.div
+    className="absolute w-2 h-2 rounded-full"
+    style={{
+      left: `${x}%`,
+      top: "40%",
+      backgroundColor: `hsl(${Math.random() * 60 + 20}, 70%, 60%)`,
+    }}
+    initial={{ opacity: 1, y: 0, scale: 1 }}
+    animate={{
+      opacity: [1, 1, 0],
+      y: [0, -80, 120],
+      x: [(Math.random() - 0.5) * 100],
+      scale: [1, 1.2, 0.5],
+      rotate: [0, Math.random() * 360],
+    }}
+    transition={{ duration: 2, delay, ease: "easeOut" }}
+  />
+);
 
 const StepGenerating = ({ data }: Props) => {
   const [status, setStatus] = useState<Status>("loading");
@@ -21,13 +42,11 @@ const StepGenerating = ({ data }: Props) => {
       try {
         const { data: result, error } = await supabase.functions.invoke("create-pennylane-quote", {
           body: {
-            // Contact
             nom: data.nom,
             prenom: data.prenom,
             email: data.email,
             telephone: data.telephone,
             adresse: data.adresse || "",
-            // Event details
             offerType: data.offerType,
             dateHeure: data.dateHeure,
             nbHeuresCouverture: data.nbHeuresCouverture,
@@ -35,27 +54,20 @@ const StepGenerating = ({ data }: Props) => {
             lieu: data.lieu,
             departement: data.departement,
             nbInvites: data.nbInvites,
-            // Providers
             nbPhotographes: data.nbPhotographes,
             nbVideastes: data.nbVideastes,
-            // Options
             optionDrone: data.optionDrone,
             optionInterviews: data.optionInterviews,
-            // Films
             filmTeaser: data.filmTeaser,
             filmSignature: data.filmSignature,
             filmReseaux: data.filmReseaux,
             filmBetisier: data.filmBetisier,
-            // Supports
             albumPhoto: data.albumPhoto,
             coffretUSB: data.coffretUSB,
-            // Delivery
             delai: data.delai,
-            // Other
             remarques: data.remarques,
             source: data.source,
             sourceAutre: data.sourceAutre,
-            // Prices
             prices: PRICES,
           },
         });
@@ -76,30 +88,72 @@ const StepGenerating = ({ data }: Props) => {
 
   if (status === "success") {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200, damping: 15 }}>
-          <CheckCircle2 className="w-20 h-20 text-accent mb-6" />
+      <div className="flex flex-col items-center justify-center py-12 relative overflow-hidden">
+        {/* Confetti */}
+        {Array.from({ length: 20 }).map((_, i) => (
+          <ConfettiParticle key={i} delay={i * 0.08} x={Math.random() * 100} />
+        ))}
+
+        <motion.div
+          initial={{ scale: 0, rotate: -180 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: "spring", stiffness: 200, damping: 15 }}
+        >
+          <div className="relative">
+            <CheckCircle2 className="w-20 h-20 text-accent" />
+            <motion.div
+              className="absolute -top-1 -right-1"
+              animate={{ rotate: [0, 15, -15, 0] }}
+              transition={{ repeat: Infinity, duration: 2, delay: 1 }}
+            >
+              <Sparkles className="w-6 h-6 text-accent" />
+            </motion.div>
+          </div>
         </motion.div>
-        <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
+
+        <motion.h1
+          className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3 mt-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
           Devis créé avec succès !
-        </h1>
+        </motion.h1>
+
         {quoteNumber && (
-          <p className="text-center text-muted-foreground text-sm mb-4">
+          <motion.p
+            className="text-center text-muted-foreground text-sm mb-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
             Référence : <span className="font-semibold text-foreground">{quoteNumber}</span>
-          </p>
+          </motion.p>
         )}
-        <p className="text-center text-muted-foreground text-sm mb-6">
+
+        <motion.p
+          className="text-center text-muted-foreground text-sm mb-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+        >
           Vous recevrez votre devis par email sous peu.
-        </p>
+        </motion.p>
+
         {pdfUrl && (
-          <a
+          <motion.a
             href={pdfUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent text-accent-foreground font-medium hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-accent text-accent-foreground font-medium hover:brightness-110 transition-all shadow-lg shadow-accent/25"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
           >
             Télécharger le devis PDF
-          </a>
+          </motion.a>
         )}
       </div>
     );
@@ -108,7 +162,9 @@ const StepGenerating = ({ data }: Props) => {
   if (status === "error") {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <XCircle className="w-20 h-20 text-destructive mb-6" />
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring" }}>
+          <XCircle className="w-20 h-20 text-destructive mb-6" />
+        </motion.div>
         <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
           Erreur lors de la génération
         </h1>
@@ -126,7 +182,7 @@ const StepGenerating = ({ data }: Props) => {
         transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
         className="mb-8"
       >
-        <Loader2 className="w-16 h-16 text-foreground" />
+        <Loader2 className="w-16 h-16 text-accent" />
       </motion.div>
       <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
         Génération de votre devis en cours...

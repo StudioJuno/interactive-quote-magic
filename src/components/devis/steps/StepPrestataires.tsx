@@ -3,6 +3,7 @@ import NavigationButtons from "../NavigationButtons";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Camera, Video } from "lucide-react";
+import { useWizardKeyboard } from "@/hooks/useWizardKeyboard";
 
 interface Props {
   data: QuoteData;
@@ -29,9 +30,19 @@ const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
   const showPhotographes = data.offerType === "photos" || data.offerType === "photos-film";
   const showVideastes = data.offerType === "film" || data.offerType === "photos-film";
 
+  const handleNext = () => {
+    if (showPhotographes && data.nbPhotographes === 0 && showVideastes && data.nbVideastes === 0) {
+      toast.error("Veuillez sélectionner au moins un prestataire.");
+      return;
+    }
+    onNext();
+  };
+
+  useWizardKeyboard({ onNext: handleNext, onPrev });
+
   return (
     <div>
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-3">
+      <h1 className="text-2xl sm:text-3xl font-heading font-bold text-center mb-2">
         Vos prestataires
       </h1>
       <p className="text-center text-muted-foreground text-sm mb-8">
@@ -43,7 +54,7 @@ const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
           <>
             <div className="flex items-center gap-2 mb-2">
               <Camera className="w-4 h-4 text-accent" />
-              <span className="text-xs font-body font-medium text-muted-foreground uppercase tracking-wider">Photographes</span>
+              <span className="step-label !mb-0">Photographes</span>
             </div>
             {photographeOptions.map((opt, i) => {
               const selected = data.nbPhotographes === opt.value;
@@ -63,7 +74,7 @@ const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
                   </div>
                   <div className="flex-1">
                     <span className="font-body font-medium text-sm">{opt.label}</span>
-                    <span className="text-xs text-muted-foreground ml-2">{opt.desc}</span>
+                    <span className="text-xs text-muted-foreground ml-2">— {opt.desc}</span>
                   </div>
                 </motion.div>
               );
@@ -71,13 +82,13 @@ const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
           </>
         )}
 
-        {showPhotographes && showVideastes && <div className="pt-2" />}
+        {showPhotographes && showVideastes && <div className="pt-3" />}
 
         {showVideastes && (
           <>
             <div className="flex items-center gap-2 mb-2">
               <Video className="w-4 h-4 text-accent" />
-              <span className="text-xs font-body font-medium text-muted-foreground uppercase tracking-wider">Vidéastes</span>
+              <span className="step-label !mb-0">Vidéastes</span>
             </div>
             {videasteOptions.map((opt, i) => {
               const selected = data.nbVideastes === opt.value;
@@ -97,7 +108,7 @@ const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
                   </div>
                   <div className="flex-1">
                     <span className="font-body font-medium text-sm">{opt.label}</span>
-                    <span className="text-xs text-muted-foreground ml-2">{opt.desc}</span>
+                    <span className="text-xs text-muted-foreground ml-2">— {opt.desc}</span>
                   </div>
                 </motion.div>
               );
@@ -106,13 +117,7 @@ const StepPrestataires = ({ data, onChange, onNext, onPrev }: Props) => {
         )}
       </div>
 
-      <NavigationButtons onPrev={onPrev} onNext={() => {
-        if (showPhotographes && data.nbPhotographes === 0 && showVideastes && data.nbVideastes === 0) {
-          toast.error("Veuillez sélectionner au moins un prestataire.");
-          return;
-        }
-        onNext();
-      }} />
+      <NavigationButtons onPrev={onPrev} onNext={handleNext} />
     </div>
   );
 };

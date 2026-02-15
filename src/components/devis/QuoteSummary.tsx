@@ -8,6 +8,18 @@ interface QuoteSummaryProps {
   isMobile?: boolean;
 }
 
+const AnimatedPrice = ({ value }: { value: number }) => (
+  <motion.span
+    key={value}
+    initial={{ scale: 0.8, opacity: 0 }}
+    animate={{ scale: 1, opacity: 1 }}
+    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    className="text-xl font-heading font-bold text-accent"
+  >
+    {value.toLocaleString("fr-FR")} €
+  </motion.span>
+);
+
 const QuoteSummary = ({ data, onClose, isMobile }: QuoteSummaryProps) => {
   const label =
     data.offerType === "photos-film"
@@ -44,9 +56,8 @@ const QuoteSummary = ({ data, onClose, isMobile }: QuoteSummaryProps) => {
 
   const subtotal = lines.reduce((sum, l) => sum + l.price, 0);
 
-  // Date display
   const dateDisplay = data.dateHeure
-    ? new Date(data.dateHeure).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })
+    ? new Date(data.dateHeure).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })
     : "";
   const timeDisplay = data.dateHeure
     ? data.dateHeure.split("T")[1]?.substring(0, 5) || ""
@@ -56,14 +67,16 @@ const QuoteSummary = ({ data, onClose, isMobile }: QuoteSummaryProps) => {
   if (!hasAnyInfo) return null;
 
   return (
-    <div className={`bg-card border border-border rounded-xl p-6 font-body ${isMobile ? 'w-full' : 'w-72'}`}>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Receipt className="w-4 h-4 text-foreground" />
+    <div className={`bg-card border border-border rounded-2xl p-6 font-body shadow-sm ${isMobile ? 'w-full' : 'w-72'}`}>
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
+            <Receipt className="w-4 h-4 text-accent" />
+          </div>
           <h3 className="text-sm font-heading font-semibold">{label}</h3>
         </div>
         {isMobile && onClose && (
-          <button onClick={onClose} className="p-1 hover:bg-muted rounded-full transition-colors">
+          <button onClick={onClose} className="p-1.5 hover:bg-muted rounded-full transition-colors">
             <X className="w-4 h-4" />
           </button>
         )}
@@ -72,7 +85,7 @@ const QuoteSummary = ({ data, onClose, isMobile }: QuoteSummaryProps) => {
       {/* Date & time */}
       {dateDisplay && (
         <p className="font-medium text-xs mb-1">
-          {dateDisplay}{timeDisplay ? `, ${timeDisplay}` : ""}{data.nbHeuresCouverture ? ` (${data.nbHeuresCouverture}h)` : ""}
+          📅 {dateDisplay}{timeDisplay ? ` à ${timeDisplay}` : ""}{data.nbHeuresCouverture ? ` (${data.nbHeuresCouverture}h)` : ""}
         </p>
       )}
 
@@ -95,7 +108,7 @@ const QuoteSummary = ({ data, onClose, isMobile }: QuoteSummaryProps) => {
 
       {lines.length > 0 && (
         <>
-          <div className="space-y-2">
+          <div className="space-y-2.5 py-3 border-t border-border">
             <AnimatePresence mode="popLayout">
               {lines.map((line, i) => (
                 <motion.div
@@ -103,40 +116,35 @@ const QuoteSummary = ({ data, onClose, isMobile }: QuoteSummaryProps) => {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
-                  transition={{ delay: i * 0.05 }}
+                  transition={{ delay: i * 0.03 }}
                   className="flex justify-between text-sm"
                 >
                   <span className="text-muted-foreground">{line.label}</span>
-                  <span className="font-medium">{line.price} €</span>
+                  <span className="font-medium tabular-nums">{line.price} €</span>
                 </motion.div>
               ))}
             </AnimatePresence>
           </div>
 
-          <div className="border-t border-border mt-4 pt-3">
-            <motion.div
-              className="flex justify-between items-center"
-              key={subtotal}
-              initial={{ scale: 0.95 }}
-              animate={{ scale: 1 }}
-            >
-              <span className="text-sm font-medium">Total</span>
-              <span className="text-xl font-heading font-bold">{subtotal} €</span>
-            </motion.div>
+          <div className="border-t border-border pt-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium">Total HT</span>
+              <AnimatedPrice value={subtotal} />
+            </div>
           </div>
         </>
       )}
 
       {lines.length === 0 && (
-        <p className="text-xs text-muted-foreground italic">
+        <p className="text-xs text-muted-foreground italic py-2">
           Vos options apparaîtront ici au fur et à mesure
         </p>
       )}
 
       {/* Délai */}
       {data.delai && (
-        <p className="text-xs font-medium mt-3">
-          Livraison {data.delai === "express" ? "Express" : "Standard"}
+        <p className="text-xs font-medium mt-3 text-muted-foreground">
+          🚀 Livraison {data.delai === "express" ? "Express" : "Standard"}
         </p>
       )}
     </div>
