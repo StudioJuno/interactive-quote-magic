@@ -199,7 +199,7 @@ const DevisWizard = () => {
 
         {showSummary && (
           <motion.div
-            className="hidden lg:block sticky top-8"
+            className="hidden md:block sticky top-8 shrink-0"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
@@ -212,7 +212,7 @@ const DevisWizard = () => {
       {/* Mobile FAB with price */}
       {showSummary && (
         <motion.button
-          className="lg:hidden fixed bottom-6 right-6 h-14 px-5 rounded-full bg-accent text-accent-foreground shadow-xl shadow-accent/30 flex items-center gap-2.5 z-50"
+          className="md:hidden fixed bottom-6 right-6 h-14 px-5 rounded-full bg-accent text-accent-foreground shadow-xl shadow-accent/30 flex items-center gap-2.5 z-50"
           onClick={() => setShowMobileSummary(true)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -237,14 +237,14 @@ const DevisWizard = () => {
         {showMobileSummary && (
           <>
             <motion.div
-              className="lg:hidden fixed inset-0 bg-foreground/30 backdrop-blur-sm z-50"
+              className="md:hidden fixed inset-0 bg-foreground/30 backdrop-blur-sm z-50"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowMobileSummary(false)}
             />
             <motion.div
-              className="lg:hidden fixed bottom-0 left-0 right-0 z-50 p-4 pb-8"
+              className="md:hidden fixed bottom-0 left-0 right-0 z-50 p-4 pb-8"
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
