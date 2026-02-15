@@ -45,6 +45,7 @@ const QuoteSummary = ({ data, onClose, isMobile }: QuoteSummaryProps) => {
     });
   }
   if (data.optionDrone) lines.push({ label: "Drone", price: PRICES.drone });
+  if (data.optionDiscours) lines.push({ label: "Discours", price: PRICES.discours });
   if (data.optionInterviews) lines.push({ label: "Interviews", price: PRICES.interviews });
   if (data.filmTeaser) lines.push({ label: 'Film "teaser"', price: PRICES.teaser });
   if (data.filmSignature) lines.push({ label: 'Film "signature"', price: PRICES.signature });
