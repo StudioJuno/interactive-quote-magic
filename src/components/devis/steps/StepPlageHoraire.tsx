@@ -123,7 +123,7 @@ const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
         <div>
           <label className="step-label">Nombre d'heures de couverture</label>
           <div className="flex flex-wrap gap-2">
-            {[4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16].map((n) => (
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16].map((n) => (
               <button
                 key={n}
                 type="button"
