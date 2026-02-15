@@ -159,7 +159,27 @@ const DevisWizard = () => {
       case "source": return <StepSource data={data} onChange={onChange} onNext={next} onPrev={prev} />;
       case "recap": return <StepRecap data={data} onChange={onChange} onNext={next} onPrev={prev} />;
       case "contact": return <StepContact data={data} onChange={onChange} onPrev={prev} onNext={next} />;
-      case "generating": return <StepGenerating data={data} />;
+      case "generating": {
+        const lines: { price: number }[] = [];
+        if (data.offerType === "photos" || data.offerType === "photos-film") {
+          lines.push({ price: PRICES.photographe * data.nbPhotographes });
+        }
+        if (data.offerType === "film" || data.offerType === "photos-film") {
+          lines.push({ price: PRICES.vidéaste * data.nbVideastes });
+        }
+        if (data.optionDrone) lines.push({ price: PRICES.drone });
+        if (data.optionInterviews) lines.push({ price: PRICES.interviews });
+        if (data.optionDiscours) lines.push({ price: PRICES.discours });
+        if (data.filmTeaser) lines.push({ price: PRICES.teaser });
+        if (data.filmSignature) lines.push({ price: PRICES.signature });
+        if (data.filmReseaux) lines.push({ price: PRICES.reseaux });
+        if (data.filmBetisier) lines.push({ price: PRICES.betisier });
+        if (data.albumPhoto) lines.push({ price: PRICES.album });
+        if (data.coffretUSB) lines.push({ price: PRICES.coffret });
+        if (data.delai === "express") lines.push({ price: PRICES.express });
+        const total = lines.reduce((s, l) => s + l.price, 0);
+        return <StepGenerating data={data} subtotal={total} />;
+      }
       default: return null;
     }
   };
