@@ -75,6 +75,21 @@ const StepContact = ({ data, onChange, onPrev, onNext }: Props) => {
             </div>
           </div>
           <div>
+            <label className="step-label">Téléphone 2 (optionnel)</label>
+            <div className="relative">
+              <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <input
+                type="tel"
+                value={data.telephone2}
+                onChange={(e) => onChange({ telephone2: e.target.value })}
+                placeholder="06 00 00 00 00"
+                className="wizard-input pl-10"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
             <label className="step-label">Email *</label>
             <div className="relative">
               <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -83,6 +98,19 @@ const StepContact = ({ data, onChange, onPrev, onNext }: Props) => {
                 value={data.email}
                 onChange={(e) => onChange({ email: e.target.value })}
                 placeholder="votre@email.com"
+                className="wizard-input pl-10"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="step-label">Email 2 (optionnel)</label>
+            <div className="relative">
+              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <input
+                type="email"
+                value={data.email2}
+                onChange={(e) => onChange({ email2: e.target.value })}
+                placeholder="autre@email.com"
                 className="wizard-input pl-10"
               />
             </div>
