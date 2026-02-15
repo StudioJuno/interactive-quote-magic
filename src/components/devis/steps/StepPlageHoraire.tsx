@@ -1,10 +1,14 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { QuoteData } from "../types";
 import NavigationButtons from "../NavigationButtons";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { Clock, Calendar } from "lucide-react";
+import { Clock, CalendarIcon } from "lucide-react";
 import { useWizardKeyboard } from "@/hooks/useWizardKeyboard";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface Props {
   data: QuoteData;
@@ -33,6 +37,8 @@ for (let h = 6; h <= 23; h++) {
 HOURS.push("00:00");
 
 const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
+  const [calendarOpen, setCalendarOpen] = useState(false);
+
   const toggleMoment = (moment: string) => {
     const current = data.moments;
     const updated = current.includes(moment)
@@ -44,9 +50,14 @@ const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
   const datePart = data.dateHeure ? data.dateHeure.split("T")[0] : "";
   const timePart = data.dateHeure ? data.dateHeure.split("T")[1]?.substring(0, 5) || "" : "";
 
-  const updateDate = (date: string) => {
+  const selectedDate = datePart ? new Date(datePart + "T12:00:00") : undefined;
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (!date) return;
+    const formatted = format(date, "yyyy-MM-dd");
     const time = timePart || "14:00";
-    onChange({ dateHeure: `${date}T${time}` });
+    onChange({ dateHeure: `${formatted}T${time}` });
+    setCalendarOpen(false);
   };
 
   const updateTime = (time: string) => {
@@ -90,15 +101,34 @@ const StepPlageHoraire = ({ data, onChange, onNext, onPrev }: Props) => {
         {/* Date */}
         <div>
           <label className="step-label">Date du mariage</label>
-          <div className="relative">
-            <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              type="date"
-              value={datePart}
-              onChange={(e) => updateDate(e.target.value)}
-              className="wizard-input pl-10"
-            />
-          </div>
+          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                className="wizard-input pl-10 text-left relative w-full cursor-pointer"
+              >
+                <CalendarIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                {selectedDate ? (
+                  <span className="text-foreground">
+                    {format(selectedDate, "EEEE d MMMM yyyy", { locale: fr })}
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground">Choisir une date</span>
+                )}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 rounded-2xl border-border/50 shadow-xl" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={handleDateSelect}
+                locale={fr}
+                disabled={{ before: new Date() }}
+                initialFocus
+                className="rounded-2xl"
+              />
+            </PopoverContent>
+          </Popover>
         </div>
 
         {/* Heure */}
