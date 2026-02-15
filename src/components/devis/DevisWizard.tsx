@@ -105,8 +105,10 @@ const DevisWizard = () => {
       </div>
 
       <div className="flex gap-6 w-full max-w-5xl justify-center items-start">
-        <div className="border border-border bg-card p-8 sm:p-12 w-full max-w-[700px] min-h-[500px] flex flex-col justify-center">
-          {renderStep()}
+        <div className="border border-border bg-card p-8 sm:p-12 w-full max-w-[700px] min-h-[500px] flex flex-col justify-center items-center">
+          <div className="w-full">
+            {renderStep()}
+          </div>
         </div>
 
         {showSummary && (
