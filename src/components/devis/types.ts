@@ -1,3 +1,10 @@
+export interface EventEntry {
+  dateHeure: string;
+  lieu: string;
+  departement: string;
+  nbHeuresCouverture: number;
+}
+
 export interface QuoteData {
   // Step 1 - Offre
   offerType: "film" | "photos" | "photos-film" | "";
@@ -8,6 +15,9 @@ export interface QuoteData {
   dateHeure: string;
   nbHeuresCouverture: number;
   moments: string[];
+
+  // Multi-event support (merged date + lieu)
+  events: EventEntry[];
 
   // Step 2 - Prestation
   lieu: string;
@@ -59,6 +69,7 @@ export const initialQuoteData: QuoteData = {
   dateHeure: "",
   nbHeuresCouverture: 10,
   moments: [],
+  events: [{ dateHeure: "", lieu: "", departement: "75", nbHeuresCouverture: 10 }],
   lieu: "",
   departement: "75",
   nbInvites: "",

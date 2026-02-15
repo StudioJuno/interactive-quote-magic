@@ -8,6 +8,7 @@ import StepCoverage from "./steps/StepCoverage";
 import StepLieu from "./steps/StepLieu";
 import StepInvites from "./steps/StepInvites";
 import StepPrestataires from "./steps/StepPrestataires";
+import StepDateLieu from "./steps/StepDateLieu";
 import StepOptionsSupp from "./steps/StepOptionsSupp";
 import StepFilms from "./steps/StepFilms";
 import StepSupports from "./steps/StepSupports";
@@ -55,8 +56,8 @@ const DevisWizard = () => {
   }, []);
 
   const subSteps = useMemo(() => {
-    const steps: string[] = ["offre", "coverage", "plage-horaire"];
-    steps.push("lieu", "invites", "prestataires");
+    const steps: string[] = ["offre", "coverage", "plage-horaire", "date-lieu"];
+    steps.push("invites", "prestataires");
     if (data.offerType === "film" || data.offerType === "photos-film") {
       steps.push("options-supp");
       steps.push("films");
@@ -76,8 +77,8 @@ const DevisWizard = () => {
   const currentSubStep = subSteps[step] || "offre";
 
   const getMainStep = () => {
-    if (["offre", "coverage", "plage-horaire"].includes(currentSubStep)) return 1;
-    if (["lieu", "invites", "prestataires", "options-supp", "films", "supports", "delai"].includes(currentSubStep)) return 2;
+    if (["offre", "coverage", "plage-horaire", "date-lieu"].includes(currentSubStep)) return 1;
+    if (["invites", "prestataires", "options-supp", "films", "supports", "delai"].includes(currentSubStep)) return 2;
     if (["remarques", "source", "recap"].includes(currentSubStep)) return 3;
     return 4;
   };
@@ -111,7 +112,7 @@ const DevisWizard = () => {
   const goToMainStep = (mainStep: number) => {
     const mainStepFirstSub: Record<number, string> = {
       1: "offre",
-      2: "lieu",
+      2: "invites",
       3: "remarques",
       4: "contact",
     };
@@ -149,7 +150,7 @@ const DevisWizard = () => {
       case "offre": return <StepOffre data={data} onChange={onChange} onNext={next} />;
       case "coverage": return <StepCoverage data={data} onChange={onChange} onNext={next} onPrev={prev} />;
       case "plage-horaire": return <StepPlageHoraire data={data} onChange={onChange} onNext={next} onPrev={prev} />;
-      case "lieu": return <StepLieu data={data} onChange={onChange} onNext={next} onPrev={prev} />;
+      case "date-lieu": return <StepDateLieu data={data} onChange={onChange} onNext={next} onPrev={prev} />;
       case "invites": return <StepInvites data={data} onChange={onChange} onNext={next} onPrev={prev} />;
       case "prestataires": return <StepPrestataires data={data} onChange={onChange} onNext={next} onPrev={prev} />;
       case "options-supp": return <StepOptionsSupp data={data} onChange={onChange} onNext={next} onPrev={prev} />;
