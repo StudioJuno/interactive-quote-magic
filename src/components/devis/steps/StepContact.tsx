@@ -1,63 +1,23 @@
-import { useState } from "react";
-import { QuoteData, PRICES } from "../types";
+import { QuoteData } from "../types";
 import { toast } from "sonner";
-import { MapPin, Loader2, Mail, Phone, User } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { MapPin, Mail, Phone, User } from "lucide-react";
 import { motion } from "framer-motion";
+import NavigationButtons from "../NavigationButtons";
 
 interface Props {
   data: QuoteData;
   onChange: (updates: Partial<QuoteData>) => void;
   onPrev: () => void;
+  onNext: () => void;
 }
 
-function buildQuoteLines(data: QuoteData) {
-  const lines: { label: string; quantity: number; unit_price: number }[] = [];
-  if (data.nbPhotographes > 0) lines.push({ label: "Photographe", quantity: data.nbPhotographes, unit_price: PRICES.photographe });
-  if (data.nbVideastes > 0) lines.push({ label: "Vidéaste", quantity: data.nbVideastes, unit_price: PRICES.vidéaste });
-  if (data.optionDrone) lines.push({ label: "Prises de vues aériennes (drone)", quantity: 1, unit_price: PRICES.drone });
-  if (data.optionInterviews) lines.push({ label: "Interviews / témoignages invités", quantity: 1, unit_price: PRICES.interviews });
-  if (data.filmTeaser) lines.push({ label: 'Film "teaser"', quantity: 1, unit_price: PRICES.teaser });
-  if (data.filmSignature) lines.push({ label: 'Film "signature"', quantity: 1, unit_price: PRICES.signature });
-  if (data.filmReseaux) lines.push({ label: "Contenu réseaux sociaux express", quantity: 1, unit_price: PRICES.reseaux });
-  if (data.filmBetisier) lines.push({ label: "Bêtisier", quantity: 1, unit_price: PRICES.betisier });
-  if (data.albumPhoto) lines.push({ label: "Album Photo 50 pages Premium", quantity: 1, unit_price: PRICES.album });
-  if (data.coffretUSB) lines.push({ label: "Coffret USB", quantity: 1, unit_price: PRICES.coffret });
-  if (data.delai === "express") lines.push({ label: "Livraison express (< 10 jours)", quantity: 1, unit_price: PRICES.express });
-  return lines;
-}
-
-const StepContact = ({ data, onChange, onPrev }: Props) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = async () => {
+const StepContact = ({ data, onChange, onPrev, onNext }: Props) => {
+  const handleNext = () => {
     if (!data.nom || !data.email) {
       toast.error("Veuillez remplir au moins le nom et l'email.");
       return;
     }
-    setIsSubmitting(true);
-    try {
-      const lines = buildQuoteLines(data);
-      const { data: result, error } = await supabase.functions.invoke("create-pennylane-quote", {
-        body: {
-          nom: data.nom,
-          prenom: data.prenom,
-          email: data.email,
-          telephone: data.telephone,
-          adresse: data.dateMariage,
-          dateMariage: data.dateHeure ? data.dateHeure.split("T")[0] : "",
-          lines,
-        },
-      });
-      if (error) { console.error("Edge function error:", error); toast.error("Erreur lors de la création du devis."); return; }
-      if (result?.error) { console.error("Pennylane error:", result); toast.error(`Erreur : ${result.error}`); return; }
-      toast.success("Votre devis a été créé avec succès !");
-    } catch (err) {
-      console.error("Submit error:", err);
-      toast.error("Une erreur est survenue.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    onNext();
   };
 
   return (
@@ -138,14 +98,12 @@ const StepContact = ({ data, onChange, onPrev }: Props) => {
           </svg>
         </motion.button>
         <motion.button
-          onClick={handleSubmit}
-          disabled={isSubmitting}
-          className="px-8 py-3 bg-accent text-accent-foreground font-body font-medium text-sm rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-shadow disabled:opacity-50 flex items-center gap-2"
+          onClick={handleNext}
+          className="px-8 py-3 bg-accent text-accent-foreground font-body font-medium text-sm rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-shadow flex items-center gap-2"
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
         >
-          {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
-          {isSubmitting ? "Envoi en cours..." : "Envoyer le devis"}
+          Envoyer le devis
         </motion.button>
       </div>
     </div>

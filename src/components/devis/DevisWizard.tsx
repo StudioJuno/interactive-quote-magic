@@ -14,7 +14,10 @@ import StepSupports from "./steps/StepSupports";
 import StepPlageHoraire from "./steps/StepPlageHoraire";
 import StepDelai from "./steps/StepDelai";
 import StepRemarques from "./steps/StepRemarques";
+import StepSource from "./steps/StepSource";
+import StepRecap from "./steps/StepRecap";
 import StepContact from "./steps/StepContact";
+import StepGenerating from "./steps/StepGenerating";
 import { Receipt } from "lucide-react";
 
 const MAIN_STEPS = [
@@ -63,7 +66,10 @@ const DevisWizard = () => {
     }
     steps.push("delai");
     steps.push("remarques");
+    steps.push("source");
+    steps.push("recap");
     steps.push("contact");
+    steps.push("generating");
     return steps;
   }, [data.offerType]);
 
@@ -72,7 +78,7 @@ const DevisWizard = () => {
   const getMainStep = () => {
     if (["offre", "coverage", "plage-horaire"].includes(currentSubStep)) return 1;
     if (["lieu", "invites", "prestataires", "options-supp", "films", "supports", "delai"].includes(currentSubStep)) return 2;
-    if (currentSubStep === "remarques") return 3;
+    if (["remarques", "source", "recap"].includes(currentSubStep)) return 3;
     return 4;
   };
 
@@ -117,7 +123,10 @@ const DevisWizard = () => {
       case "supports": return <StepSupports data={data} onChange={onChange} onNext={next} onPrev={prev} />;
       case "delai": return <StepDelai data={data} onChange={onChange} onNext={next} onPrev={prev} />;
       case "remarques": return <StepRemarques data={data} onChange={onChange} onNext={next} onPrev={prev} />;
-      case "contact": return <StepContact data={data} onChange={onChange} onPrev={prev} />;
+      case "source": return <StepSource data={data} onChange={onChange} onNext={next} onPrev={prev} />;
+      case "recap": return <StepRecap data={data} onChange={onChange} onNext={next} onPrev={prev} />;
+      case "contact": return <StepContact data={data} onChange={onChange} onPrev={prev} onNext={next} />;
+      case "generating": return <StepGenerating data={data} />;
       default: return null;
     }
   };
@@ -157,7 +166,6 @@ const DevisWizard = () => {
         )}
       </div>
 
-      {/* Mobile floating summary button */}
       {showSummary && (
         <motion.button
           className="lg:hidden fixed bottom-6 right-6 w-14 h-14 rounded-full bg-accent text-accent-foreground shadow-xl shadow-accent/30 flex items-center justify-center z-50"
@@ -171,7 +179,6 @@ const DevisWizard = () => {
         </motion.button>
       )}
 
-      {/* Mobile summary drawer */}
       <AnimatePresence>
         {showMobileSummary && (
           <>

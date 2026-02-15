@@ -36,6 +36,13 @@ export interface QuoteData {
   // Step 3 - Remarque
   remarques: string;
 
+  // Source
+  source: string;
+  sourceAutre: string;
+
+  // Code promo
+  codePromo: string;
+
   // Step 4 - Contact
   nom: string;
   prenom: string;
@@ -66,6 +73,9 @@ export const initialQuoteData: QuoteData = {
   coffretUSB: false,
   delai: "",
   remarques: "",
+  source: "",
+  sourceAutre: "",
+  codePromo: "",
   nom: "",
   prenom: "",
   email: "",
