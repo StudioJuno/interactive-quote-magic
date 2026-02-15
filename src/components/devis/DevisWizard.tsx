@@ -10,6 +10,7 @@ import StepPrestataires from "./steps/StepPrestataires";
 import StepOptionsSupp from "./steps/StepOptionsSupp";
 import StepFilms from "./steps/StepFilms";
 import StepSupports from "./steps/StepSupports";
+import StepPlageHoraire from "./steps/StepPlageHoraire";
 import StepDelai from "./steps/StepDelai";
 import StepRemarques from "./steps/StepRemarques";
 import StepContact from "./steps/StepContact";
@@ -31,7 +32,7 @@ const DevisWizard = () => {
 
   // Build sub-steps dynamically based on offerType
   const subSteps = useMemo(() => {
-    const steps: string[] = ["offre", "coverage"];
+    const steps: string[] = ["offre", "coverage", "plage-horaire"];
 
     // Prestation sub-steps
     steps.push("lieu", "invites", "prestataires");
@@ -55,7 +56,7 @@ const DevisWizard = () => {
   const currentSubStep = subSteps[step] || "offre";
 
   const getMainStep = () => {
-    if (["offre", "coverage"].includes(currentSubStep)) return 1;
+    if (["offre", "coverage", "plage-horaire"].includes(currentSubStep)) return 1;
     if (["lieu", "invites", "prestataires", "options-supp", "films", "supports", "delai"].includes(currentSubStep)) return 2;
     if (currentSubStep === "remarques") return 3;
     return 4;
@@ -72,6 +73,8 @@ const DevisWizard = () => {
         return <StepOffre data={data} onChange={onChange} onNext={next} />;
       case "coverage":
         return <StepCoverage data={data} onChange={onChange} onNext={next} onPrev={prev} />;
+      case "plage-horaire":
+        return <StepPlageHoraire data={data} onChange={onChange} onNext={next} onPrev={prev} />;
       case "lieu":
         return <StepLieu data={data} onChange={onChange} onNext={next} onPrev={prev} />;
       case "invites":

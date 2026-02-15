@@ -4,6 +4,11 @@ export interface QuoteData {
   coverageType: "jour-j" | "autres-moments" | "";
   nbJours: number;
 
+  // Plage horaire
+  dateHeure: string;
+  nbHeuresCouverture: number;
+  moments: string[];
+
   // Step 2 - Prestation
   lieu: string;
   departement: string;
@@ -43,6 +48,9 @@ export const initialQuoteData: QuoteData = {
   offerType: "",
   coverageType: "",
   nbJours: 2,
+  dateHeure: "",
+  nbHeuresCouverture: 10,
+  moments: [],
   lieu: "",
   departement: "75",
   nbInvites: "",
